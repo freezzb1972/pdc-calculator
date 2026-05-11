@@ -1,0 +1,17 @@
+[
+  {"model_name":"YZW 3×1.5mm²","conductor_material":"铜芯","insulation":"PVC","cross_section_mm2":1.5,"core_count":3,"max_current_a":15,"unit_price":2.5},
+  {"model_name":"YZW 3×2.5mm²","conductor_material":"铜芯","insulation":"PVC","cross_section_mm2":2.5,"core_count":3,"max_current_a":21,"unit_price":3.8},
+  {"model_name":"YZW 3×4mm²","conductor_material":"铜芯","insulation":"PVC","cross_section_mm2":4,"core_count":3,"max_current_a":28,"unit_price":5.5},
+  {"model_name":"YZW 3×6mm²","conductor_material":"铜芯","insulation":"PVC","cross_section_mm2":6,"core_count":3,"max_current_a":36,"unit_price":7.8},
+  {"model_name":"YZW 3×10mm²","conductor_material":"铜芯","insulation":"PVC","cross_section_mm2":10,"core_count":3,"max_current_a":50,"unit_price":12.5},
+  {"model_name":"YZW 3×16mm²","conductor_material":"铜芯","insulation":"PVC","cross_section_mm2":16,"core_count":3,"max_current_a":68,"unit_price":18.0},
+  {"model_name":"YZW 3×25mm²","conductor_material":"铜芯","insulation":"PVC","cross_section_mm2":25,"core_count":3,"max_current_a":89,"unit_price":28.0},
+  {"model_name":"YZW 3×35mm²","conductor_material":"铜芯","insulation":"PVC","cross_section_mm2":35,"core_count":3,"max_current_a":111,"unit_price":38.0},
+  {"model_name":"YZW 4×6mm²","conductor_material":"铜芯","insulation":"PVC","cross_section_mm2":6,"core_count":4,"max_current_a":34,"unit_price":9.5},
+  {"model_name":"YZW 4×10mm²","conductor_material":"铜芯","insulation":"PVC","cross_section_mm2":10,"core_count":4,"max_current_a":48,"unit_price":15.0},
+  {"model_name":"YZW 4×16mm²","conductor_material":"铜芯","insulation":"PVC","cross_section_mm2":16,"core_count":4,"max_current_a":65,"unit_price":22.0},
+  {"model_name":"YZW 4×25mm²","conductor_material":"铜芯","insulation":"PVC","cross_section_mm2":25,"core_count":4,"max_current_a":85,"unit_price":34.0},
+  {"model_name":"YZW 4×35mm²","conductor_material":"铜芯","insulation":"PVC","cross_section_mm2":35,"core_count":4,"max_current_a":105,"unit_price":45.0},
+  {"model_name":"ZC-TRVV 4×16mm²","conductor_material":"铜芯","insulation":"PVC","cross_section_mm2":16,"core_count":4,"max_current_a":60,"unit_price":35.0},
+  {"model_name":"ZC-TRVV 4×25mm²","conductor_material":"铜芯","insulation":"PVC","cross_section_mm2":25,"core_count":4,"max_current_a":80,"unit_price":50.0}
+]

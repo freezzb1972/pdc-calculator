@@ -1,0 +1,21 @@
+[
+  {"filter_current_min":0,"filter_current_max":20,"phases":"单相","min_cross_section_mm2":1.5,"recommended_cable_id":2,"connector_type":"接线端子","notes":"照明或小功率设备"},
+  {"filter_current_min":20,"filter_current_max":30,"phases":"单相","min_cross_section_mm2":2.5,"recommended_cable_id":2,"connector_type":"接线端子","notes":"普通插座回路"},
+  {"filter_current_min":30,"filter_current_max":40,"phases":"单相","min_cross_section_mm2":4,"recommended_cable_id":3,"connector_type":"接线端子","notes":"大功率单相设备"},
+
+  {"filter_current_min":0,"filter_current_max":20,"phases":"三相","min_cross_section_mm2":1.5,"recommended_cable_id":1,"connector_type":"接线端子","notes":"三相照明/小功率"},
+  {"filter_current_min":20,"filter_current_max":35,"phases":"三相","min_cross_section_mm2":2.5,"recommended_cable_id":2,"connector_type":"接线端子","notes":"DL-2X16C55配套"},
+  {"filter_current_min":35,"filter_current_max":50,"phases":"三相","min_cross_section_mm2":6,"recommended_cable_id":5,"connector_type":"接线端子","notes":"DL-2X32C55配套"},
+  {"filter_current_min":50,"filter_current_max":80,"phases":"三相","min_cross_section_mm2":10,"recommended_cable_id":7,"connector_type":"接线端子","notes":"DL-2X63C55配套"},
+  {"filter_current_min":80,"filter_current_max":110,"phases":"三相","min_cross_section_mm2":16,"recommended_cable_id":13,"connector_type":"铜鼻子","notes":"DL-2X100C55配套"},
+  {"filter_current_min":110,"filter_current_max":140,"phases":"三相","min_cross_section_mm2":25,"recommended_cable_id":14,"connector_type":"铜鼻子","notes":"DL-2X150C55配套"},
+  {"filter_current_min":140,"filter_current_max":180,"phases":"三相","min_cross_section_mm2":35,"recommended_cable_id":8,"connector_type":"铜鼻子","notes":"DL-2X200C55配套"},
+  {"filter_current_min":180,"filter_current_max":250,"phases":"三相","min_cross_section_mm2":50,"recommended_cable_id":12,"connector_type":"铜鼻子","notes":"大功率滤波器，需并联或增大截面"},
+  {"filter_current_min":250,"filter_current_max":350,"phases":"三相","min_cross_section_mm2":70,"recommended_cable_id":14,"connector_type":"铜鼻子","notes":"DL-4X300C55配套，建议并联"},
+  {"filter_current_min":350,"filter_current_max":500,"phases":"三相","min_cross_section_mm2":95,"recommended_cable_id":15,"connector_type":"铜排","notes":"DL-4X400C55配套，推荐铜排或并联"},
+  {"filter_current_min":500,"filter_current_max":800,"phases":"三相","min_cross_section_mm2":120,"recommended_cable_id":15,"connector_type":"铜排","notes":"DL-4X600C55配套，需多根并联或铜排"},
+
+  {"filter_current_min":0,"filter_current_max":50,"phases":"直流","min_cross_section_mm2":2.5,"recommended_cable_id":2,"connector_type":"接线端子","notes":"直流电源回路"},
+  {"filter_current_min":50,"filter_current_max":100,"phases":"直流","min_cross_section_mm2":10,"recommended_cable_id":6,"connector_type":"铜鼻子","notes":"大功率直流回路"},
+  {"filter_current_min":100,"filter_current_max":200,"phases":"直流","min_cross_section_mm2":25,"recommended_cable_id":14,"connector_type":"铜鼻子","notes":"直流大电流需并联"}
+]

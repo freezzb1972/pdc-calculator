@@ -1,0 +1,18 @@
+[
+  {"model_name":"DL-2X16C55-JCL-H","manufacturer":"坚力","voltage_rating_v":250,"current_rating_a":16,"phases":"单相","wire_count":2,"unit_price":909.87,"category":"照明"},
+  {"model_name":"DL-2X32C55-JCL-H","manufacturer":"坚力","voltage_rating_v":250,"current_rating_a":32,"phases":"单相","wire_count":2,"unit_price":1032.80,"category":"暗室设备"},
+  {"model_name":"DL-2X50C55-JCL-H","manufacturer":"坚力","voltage_rating_v":250,"current_rating_a":50,"phases":"单相","wire_count":2,"unit_price":1667.21,"category":"暗室设备"},
+  {"model_name":"DL-2X63C55-JCL-H","manufacturer":"坚力","voltage_rating_v":250,"current_rating_a":63,"phases":"单相","wire_count":2,"unit_price":1807.81,"category":"暗室设备"},
+  {"model_name":"DL-2X100C55-JCL-H","manufacturer":"坚力","voltage_rating_v":250,"current_rating_a":100,"phases":"单相","wire_count":2,"unit_price":3146.49,"category":"EUT"},
+  {"model_name":"DL-2X150C55-JCL-H","manufacturer":"坚力","voltage_rating_v":250,"current_rating_a":150,"phases":"单相","wire_count":2,"unit_price":5598.61,"category":"EUT"},
+  {"model_name":"DL-2X200C55-JCL-H","manufacturer":"坚力","voltage_rating_v":250,"current_rating_a":200,"phases":"单相","wire_count":2,"unit_price":7444.25,"category":"EUT"},
+  {"model_name":"DL-4X16C55-JCL-H","manufacturer":"坚力","voltage_rating_v":440,"current_rating_a":16,"phases":"三相","wire_count":4,"unit_price":2408.87,"category":"暗室设备"},
+  {"model_name":"DL-4X32C55-JCL-H","manufacturer":"坚力","voltage_rating_v":440,"current_rating_a":32,"phases":"三相","wire_count":4,"unit_price":2722.78,"category":"暗室设备"},
+  {"model_name":"DL-4X50C55-JCL-H","manufacturer":"坚力","voltage_rating_v":440,"current_rating_a":50,"phases":"三相","wire_count":4,"unit_price":3306.07,"category":"暗室设备"},
+  {"model_name":"DL-4X63C55-JCL-H","manufacturer":"坚力","voltage_rating_v":440,"current_rating_a":63,"phases":"三相","wire_count":4,"unit_price":3604.71,"category":"转台"},
+  {"model_name":"DL-4X100C55-JCL-H","manufacturer":"坚力","voltage_rating_v":440,"current_rating_a":100,"phases":"三相","wire_count":4,"unit_price":6351.36,"category":"EUT"},
+  {"model_name":"DL-4X150C55-JCL-H","manufacturer":"坚力","voltage_rating_v":440,"current_rating_a":150,"phases":"三相","wire_count":4,"unit_price":9410.94,"category":"EUT"},
+  {"model_name":"DL-4X200C55-JCL-H","manufacturer":"坚力","voltage_rating_v":440,"current_rating_a":200,"phases":"三相","wire_count":4,"unit_price":12000,"category":"EUT"},
+  {"model_name":"DL-4X250C55-JCL-H","manufacturer":"坚力","voltage_rating_v":440,"current_rating_a":250,"phases":"三相","wire_count":4,"unit_price":15000,"category":"EUT"},
+  {"model_name":"DL-4X600C55-JCL-H","manufacturer":"坚力","voltage_rating_v":440,"current_rating_a":600,"phases":"三相","wire_count":4,"unit_price":35000,"category":"EUT"}
+]

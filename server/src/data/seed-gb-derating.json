@@ -1,0 +1,36 @@
+[
+  {"factor_type":"温度校正","condition_desc":"25°C","factor_value":1.06,"version":"GB/T 16895.15-2022"},
+  {"factor_type":"温度校正","condition_desc":"30°C（基准）","factor_value":1.00,"version":"GB/T 16895.15-2022"},
+  {"factor_type":"温度校正","condition_desc":"35°C","factor_value":0.94,"version":"GB/T 16895.15-2022"},
+  {"factor_type":"温度校正","condition_desc":"40°C","factor_value":0.87,"version":"GB/T 16895.15-2022"},
+  {"factor_type":"温度校正","condition_desc":"45°C","factor_value":0.79,"version":"GB/T 16895.15-2022"},
+  {"factor_type":"温度校正","condition_desc":"50°C","factor_value":0.71,"version":"GB/T 16895.15-2022"},
+  {"factor_type":"温度校正","condition_desc":"55°C","factor_value":0.61,"version":"GB/T 16895.15-2022"},
+  {"factor_type":"温度校正","condition_desc":"60°C","factor_value":0.50,"version":"GB/T 16895.15-2022"},
+
+  {"factor_type":"多回路并列校正","condition_desc":"1回路","factor_value":1.00,"version":"GB/T 16895.15-2022"},
+  {"factor_type":"多回路并列校正","condition_desc":"2回路","factor_value":0.80,"version":"GB/T 16895.15-2022"},
+  {"factor_type":"多回路并列校正","condition_desc":"3回路","factor_value":0.70,"version":"GB/T 16895.15-2022"},
+  {"factor_type":"多回路并列校正","condition_desc":"4回路","factor_value":0.65,"version":"GB/T 16895.15-2022"},
+  {"factor_type":"多回路并列校正","condition_desc":"5回路","factor_value":0.60,"version":"GB/T 16895.15-2022"},
+  {"factor_type":"多回路并列校正","condition_desc":"6~8回路","factor_value":0.55,"version":"GB/T 16895.15-2022"},
+  {"factor_type":"多回路并列校正","condition_desc":"9回路及以上","factor_value":0.50,"version":"GB/T 16895.15-2022"},
+
+  {"factor_type":"穿管校正","condition_desc":"单根穿管","factor_value":0.80,"version":"GB/T 16895.15-2022"},
+  {"factor_type":"穿管校正","condition_desc":"两根共管","factor_value":0.70,"version":"GB/T 16895.15-2022"},
+  {"factor_type":"穿管校正","condition_desc":"三根共管","factor_value":0.60,"version":"GB/T 16895.15-2022"},
+
+  {"factor_type":"直埋敷设校正","condition_desc":"埋深<0.5m","factor_value":0.90,"version":"GB/T 16895.15-2022"},
+  {"factor_type":"直埋敷设校正","condition_desc":"埋深0.5~0.7m","factor_value":1.00,"version":"GB/T 16895.15-2022"},
+  {"factor_type":"直埋敷设校正","condition_desc":"埋深0.7~0.9m","factor_value":0.95,"version":"GB/T 16895.15-2022"},
+  {"factor_type":"直埋敷设校正","condition_desc":"埋深>0.9m","factor_value":0.90,"version":"GB/T 16895.15-2022"},
+
+  {"factor_type":"土壤热阻校正","condition_desc":"土壤热阻1.0K·m/W（标准）","factor_value":1.00,"version":"GB/T 16895.15-2022"},
+  {"factor_type":"土壤热阻校正","condition_desc":"土壤热阻1.5K·m/W","factor_value":0.87,"version":"GB/T 16895.15-2022"},
+  {"factor_type":"土壤热阻校正","condition_desc":"土壤热阻2.0K·m/W","factor_value":0.78,"version":"GB/T 16895.15-2022"},
+  {"factor_type":"土壤热阻校正","condition_desc":"土壤热阻2.5K·m/W","factor_value":0.71,"version":"GB/T 16895.15-2022"},
+
+  {"factor_type":"谐波校正","condition_desc":"三次谐波含量15~33%","factor_value":0.86,"version":"GB/T 16895.15-2022"},
+  {"factor_type":"谐波校正","condition_desc":"三次谐波含量33~45%","factor_value":0.76,"version":"GB/T 16895.15-2022"},
+  {"factor_type":"谐波校正","condition_desc":"三次谐波含量>45%","factor_value":0.63,"version":"GB/T 16895.15-2022"}
+]

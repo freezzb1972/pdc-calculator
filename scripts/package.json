@@ -1,0 +1,12 @@
+{
+  "name": "pdc-scripts",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "seed": "tsx seed-filters.ts",
+    "import-excel": "tsx import-from-excel.ts"
+  },
+  "devDependencies": {
+    "tsx": "^4.7.0"
+  }
+}

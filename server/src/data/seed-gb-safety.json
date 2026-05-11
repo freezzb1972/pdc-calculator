@@ -1,0 +1,156 @@
+[
+  {
+    "rule_code":"GB50054-3.2.1",
+    "rule_name":"最小导体截面",
+    "description":"动力线路铜芯截面不小于2.5mm²，照明线路铜芯截面不小于1.5mm²",
+    "check_formula":"cross_section >= CASE WHEN circuit_type='lighting' THEN 1.5 ELSE 2.5 END",
+    "min_value":1.5,
+    "max_value":null,
+    "unit":"mm²",
+    "severity":"error",
+    "version":"GB 50054-2011"
+  },
+  {
+    "rule_code":"GB50054-3.2.2",
+    "rule_name":"PE线最小截面",
+    "description":"PE线截面不小于：相线S≤16mm²时PE=S，16<S≤35时PE=16，S>35时PE=S/2",
+    "check_formula":"pe_cross_section >= CASE WHEN phase_cross_section <= 16 THEN phase_cross_section WHEN phase_cross_section <= 35 THEN 16 ELSE phase_cross_section/2 END",
+    "min_value":null,
+    "max_value":null,
+    "unit":"mm²",
+    "severity":"error",
+    "version":"GB 50054-2011"
+  },
+  {
+    "rule_code":"GB50054-3.2.3",
+    "rule_name":"导体敷设温度",
+    "description":"PVC绝缘导体最高运行温度70°C，XLPE绝缘导体最高运行温度90°C",
+    "check_formula":"operating_temp <= CASE WHEN insulation='PVC' THEN 70 WHEN insulation='XLPE' THEN 90 END",
+    "min_value":null,
+    "max_value":90,
+    "unit":"°C",
+    "severity":"error",
+    "version":"GB 50054-2011"
+  },
+  {
+    "rule_code":"GB/T16895-523",
+    "rule_name":"载流量校验",
+    "description":"电缆载流量Iz×校正系数 ≥ 1.25×回路计算电流Ib",
+    "check_formula":"iz * kt * kg >= 1.25 * ib",
+    "min_value":null,
+    "max_value":null,
+    "unit":"A",
+    "severity":"error",
+    "version":"GB/T 16895.15-2022"
+  },
+  {
+    "rule_code":"GB50054-6.2.3",
+    "rule_name":"过负荷保护",
+    "description":"过负荷保护电器动作电流I₂ ≤ 1.45×电缆载流量Iz，保证电缆在过负荷时不会超过允许温升",
+    "check_formula":"i2 <= 1.45 * iz",
+    "min_value":null,
+    "max_value":null,
+    "unit":"A",
+    "severity":"error",
+    "version":"GB 50054-2011"
+  },
+  {
+    "rule_code":"GB50054-6.2.4",
+    "rule_name":"短路保护",
+    "description":"短路保护电器应在短路电流造成导体热损坏前切断电路，切断时间不超过5s（固定式设备）或0.4s（手持/移动式）",
+    "check_formula":"ik^2 * t <= k^2 * s^2",
+    "min_value":null,
+    "max_value":null,
+    "unit":"",
+    "severity":"error",
+    "version":"GB 50054-2011"
+  },
+  {
+    "rule_code":"GB50054-6.4.1",
+    "rule_name":"接地故障保护",
+    "description":"接地故障保护应在接地故障电流造成危险前切断电路，TN系统最大切断时间：固定式设备5s，手持/移动式0.4s",
+    "check_formula":"ia <= if where ia=保护电器动作电流, if=最小接地故障电流",
+    "min_value":null,
+    "max_value":null,
+    "unit":"A",
+    "severity":"error",
+    "version":"GB 50054-2011"
+  },
+  {
+    "rule_code":"GB50054-3.2.5",
+    "rule_name":"电缆并列校正",
+    "description":"多根电缆并列敷设时，载流量需乘以并列校正系数",
+    "check_formula":"iz_derated = iz * grouping_factor",
+    "min_value":null,
+    "max_value":null,
+    "unit":"",
+    "severity":"warning",
+    "version":"GB 50054-2011"
+  },
+  {
+    "rule_code":"GB50052-4.0.4",
+    "rule_name":"电压降校验",
+    "description":"配电线路电压降ΔU% ≤ 5%（照明线路≤3%），确保末端电压满足设备要求",
+    "check_formula":"delta_u_pct <= 5 (or 3 for lighting)",
+    "min_value":null,
+    "max_value":5,
+    "unit":"%",
+    "severity":"warning",
+    "version":"GB 50052-2009"
+  },
+  {
+    "rule_code":"GB50052-6.0.1",
+    "rule_name":"电压等级匹配",
+    "description":"低压配电系统电压等级应与设备额定电压匹配：AC380V±7%，AC220V±10%",
+    "check_formula":"abs(supply_voltage - rated_voltage) / rated_voltage <= tolerance",
+    "min_value":null,
+    "max_value":null,
+    "unit":"V",
+    "severity":"error",
+    "version":"GB 50052-2009"
+  },
+  {
+    "rule_code":"GB50217-3.6.1",
+    "rule_name":"电缆弯曲半径",
+    "description":"电缆敷设最小弯曲半径：PVC电缆≥10倍外径，XLPE电缆≥15倍外径，拖链电缆≥7.5倍外径",
+    "check_formula":"bend_radius >= min_bend_radius",
+    "min_value":null,
+    "max_value":null,
+    "unit":"mm",
+    "severity":"warning",
+    "version":"GB 50217-2018"
+  },
+  {
+    "rule_code":"GB50217-4.1.3",
+    "rule_name":"电缆防火分隔",
+    "description":"电缆沟、电缆桥架穿越防火分区处应设防火封堵，重要回路电缆应采用阻燃或耐火电缆",
+    "check_formula":"fire_rating >= required_fire_rating",
+    "min_value":null,
+    "max_value":null,
+    "unit":"",
+    "severity":"warning",
+    "version":"GB 50217-2018"
+  },
+  {
+    "rule_code":"GB50054-3.1.2",
+    "rule_name":"多回路N线截面",
+    "description":"三相回路N线截面：相线截面≤16mm²时N线与相线等截面，相线截面>16mm²时N线可减半但≥16mm²",
+    "check_formula":"n_cross_section >= CASE WHEN phase_cross_section <= 16 THEN phase_cross_section ELSE GREATEST(16, phase_cross_section/2) END",
+    "min_value":null,
+    "max_value":null,
+    "unit":"mm²",
+    "severity":"error",
+    "version":"GB 50054-2011"
+  },
+  {
+    "rule_code":"GB50054-3.1.9",
+    "rule_name":"拖链电缆特殊要求",
+    "description":"拖链系统应使用专用柔性拖链电缆（如ZC-TRVV系列），电缆弯曲半径应满足拖链最小弯曲半径要求",
+    "check_formula":"cable_type IN ('ZC-TRVV') AND cable_bend_radius >= dragchain_bend_radius",
+    "min_value":null,
+    "max_value":null,
+    "unit":"",
+    "severity":"error",
+    "version":"GB 50054-2011"
+  }
+]

@@ -1,0 +1,423 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<title>Phase 1a 架构方案 — EMC 暗室配电方案自动计算工具</title>
+<style>
+body { font-family: -apple-system, "Segoe UI", "Microsoft YaHei", sans-serif; max-width: 1000px; margin: 30px auto; padding: 0 28px; background: #f5f6f8; color: #1a1a2e; }
+h1 { font-size: 26px; border-bottom: 3px solid #4361ee; padding-bottom: 12px; }
+h2 { font-size: 18px; margin: 32px 0 14px; padding-left: 10px; border-left: 4px solid #4361ee; color: #1a1a2e; }
+h3 { font-size: 15px; margin: 20px 0 10px; color: #333; }
+
+/* 架构图 */
+.arch-box { background: #fff; border-radius: 10px; padding: 20px; box-shadow: 0 1px 6px rgba(0,0,0,.08); margin: 16px 0; font-family: "Cascadia Code", "Fira Code", monospace; font-size: 13px; line-height: 1.6; white-space: pre; overflow-x: auto; }
+.arch-box .hl { background: #e8f4f8; }
+.arch-box .hl2 { background: #fff3e0; }
+.arch-box .hl3 { background: #e8f5e9; }
+
+/* 决策表 */
+table { width: 100%; border-collapse: collapse; background: #fff; border-radius: 8px; box-shadow: 0 1px 4px rgba(0,0,0,.08); margin: 12px 0; }
+th { background: #4361ee; color: #fff; text-align: left; padding: 9px 14px; font-size: 13px; }
+td { padding: 8px 14px; border-bottom: 1px solid #edf2f7; font-size: 14px; }
+tr:last-child td { border-bottom: none; }
+td:first-child { font-weight: 600; color: #4361ee; }
+
+/* 数据模型树 */
+.tree { background: #fff; border-radius: 8px; padding: 16px 20px; box-shadow: 0 1px 4px rgba(0,0,0,.08); font-family: "Cascadia Code", "Fira Code", monospace; font-size: 13px; line-height: 1.7; }
+.tree .highlight { color: #e63946; font-weight: 600; }
+.tag { display: inline-block; font-size: 11px; padding: 1px 8px; border-radius: 10px; margin-left: 4px; }
+.tag-green { background: #e8f5e9; color: #2e7d32; }
+.tag-blue { background: #e3f2fd; color: #1565c0; }
+.tag-orange { background: #fff3e0; color: #e65100; }
+.tag-red { background: #ffebee; color: #c62828; }
+
+/* 模块网格 */
+.module-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin: 12px 0; }
+.module-card { background: #fff; border-radius: 8px; padding: 14px 18px; box-shadow: 0 1px 4px rgba(0,0,0,.06); }
+.module-card h4 { margin: 0 0 6px; font-size: 14px; color: #4361ee; }
+.module-card p { margin: 0; font-size: 13px; color: #555; }
+.module-card ul { margin: 6px 0 0; padding-left: 16px; font-size: 13px; }
+.module-card ul li { margin: 2px 0; }
+
+/* API 网格 */
+.api-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; margin: 12px 0; }
+.api-card { background: #fff; border-radius: 6px; padding: 10px 14px; box-shadow: 0 1px 3px rgba(0,0,0,.06); font-size: 12px; }
+.api-card code { background: #f0f0f0; padding: 1px 5px; border-radius: 3px; font-size: 11px; }
+
+.check-pass { color: #2e7d32; }
+.check-warn { color: #e65100; }
+</style>
+</head>
+<body>
+
+<h1>EMC 暗室配电方案自动计算工具 — Phase 1a 架构方案</h1>
+
+<p style="color:#666;font-size:14px;">生成日期：2026-05-10 | 状态：<span style="color:#4361ee;font-weight:600;">DRAFT</span> | 版本：v0.1</p>
+
+<!-- ==================== 架构总览 ==================== -->
+<h2>一、架构总览</h2>
+
+<div class="arch-box">
+┌─────────────────────────────────────────────────────────────────┐
+│  <span style="color:#4361ee;">React 前端</span> (Vite + TypeScript)                          │
+│  ┌─────────────────────────────────────────────────────────┐   │
+│  │ 项目管理    线路编辑    数据管理 (/admin/)    安全校验报告│   │
+│  └─────────────────────────────────────────────────────────┘   │
+╞═════════════════════════════════════════════════════════════════╡
+│  REST API (JSON) ←──→  Express + TypeScript                    │
+├─────────────────────────────────────────────────────────────────┤
+│  <span style="color:#e63946;">Engine 计算层</span>                                          │
+│  ├─ <b>Selector</b>   滤波器 → 线缆 → 附件 (选型引擎)                  │
+│  ├─ <b>Calculator</b>  长度 → BOM → 成本 (计算引擎)                   │
+│  └─ <b>GB Checker</b>  载流量/电压降/安全校验 (符合国标)               │
+├─────────────────────────────────────────────────────────────────┤
+│  <span style="color:#2e7d32;">Data 数据层</span> (SQLite + JSON seed)                       │
+│  ├─ 滤波器库 │ 线缆规格库 │ 选型规则表 │ 国标数据 (带版本号)          │
+│  └─ 项目数据 │ 价格历史 │ 变更日志                                  │
+└─────────────────────────────────────────────────────────────────┘
+</div>
+
+<!-- ==================== 功能模块 ==================== -->
+<h2>二、功能模块</h2>
+
+<div class="module-grid">
+<div class="module-card">
+<h4>📋 项目管理</h4>
+<ul>
+<li>新建/编辑/删除项目</li>
+<li>多房间支持 (暗室/控制室/功放室/屏蔽室)</li>
+<li>房间尺寸 &amp; 照明配置</li>
+<li>线路管理 (新增/编辑/删除线路)</li>
+</ul>
+</div>
+<div class="module-card">
+<h4>🔌 线路编辑器</h4>
+<ul>
+<li>选择滤波器 → 自动推荐线缆规格</li>
+<li>CableSegment 线段编辑 (主干/分支/并联/拖链)</li>
+<li>末端设备配置 (插座类型 &amp; 数量)</li>
+<li>电缆长度输入 (支持人工填写或坐标计算)</li>
+</ul>
+</div>
+<div class="module-card">
+<h4>📊 BOM &amp; 成本</h4>
+<ul>
+<li>实时物料清单</li>
+<li>按类别分组 (滤波器/电缆/插座/附件)</li>
+<li>单价 × 数量 = 小计 → 总计</li>
+<li>导出 Excel (.xlsx) </li>
+</ul>
+</div>
+<div class="module-card">
+<h4>🔍 GB 安全校验</h4>
+<ul>
+<li>载流量校验 (GB/T 16895)</li>
+<li>电压降校验 (GB 50054 ≤5%)</li>
+<li>热稳定 &amp; 机械强度校验</li>
+<li>生成独立合规报告 (绿色通过/红色警告)</li>
+</ul>
+</div>
+<div class="module-card">
+<h4>📦 滤波器库管理 <span class="tag tag-blue">/admin</span></h4>
+<ul>
+<li>列表 + 搜索 + 筛选</li>
+<li>单条编辑 (型号/参数/尺寸/价格)</li>
+<li>批量导入 Excel</li>
+<li>批量导出 (备份/分享)</li>
+</ul>
+</div>
+<div class="module-card">
+<h4>📐 线缆规格管理 <span class="tag tag-blue">/admin</span></h4>
+<ul>
+<li>载流量表可视化编辑</li>
+<li>新增电缆型号</li>
+<li>校正系数配置 (温度/并列/敷设方式)</li>
+</ul>
+</div>
+<div class="module-card">
+<h4>📜 国标数据管理 <span class="tag tag-orange">/admin</span></h4>
+<ul>
+<li>载流量表查看/更新</li>
+<li>安全规则配置</li>
+<li>版本管理 (追踪更新历史)</li>
+<li>支持定期自动 &amp; 手动更新</li>
+</ul>
+</div>
+<div class="module-card">
+<h4>💰 价格管理 <span class="tag tag-orange">/admin</span></h4>
+<ul>
+<li>批量上传新价格表 (Excel)</li>
+<li>价格变更历史</li>
+<li>供应商价格版本追踪</li>
+</ul>
+</div>
+</div>
+
+<!-- ==================== 数据模型 ==================== -->
+<h2>三、数据模型</h2>
+
+<div class="tree">
+Project
+  ├─ id, name, created_at
+  └─ rooms[]
+      └─ <b>Room</b>
+          ├─ type: <span style="color:#1565c0;">暗室 | 控制室 | 功放室 | 屏蔽室</span>
+          ├─ dimensions: { length, width, height }
+          ├─ lighting: { model, count, circuits }
+          └─ circuits[]
+              └─ <span class="highlight">Circuit</span>  ← 核心实体
+                  ├─ filter_id ─────→ <b>FilterLibrary</b>
+                  ├─ purpose: <span style="color:#1565c0;">照明 | 设备 | EUT | 转台 | 预留</span>
+                  ├─ voltage_phases: <span style="color:#1565c0;">单相 | 三相 | 直流</span>
+                  └─ segments[]  ← 线段列表
+                      └─ <span class="highlight">CableSegment</span>
+                          ├─ type: <span style="color:#1565c0;">trunk | branch | parallel | dragchain</span>
+                          ├─ cable_spec_id ──→ <b>CableSpecs</b>
+                          ├─ length_m
+                          ├─ parallel_count: 1  (并联根数)
+                          ├─ parent_segment_id: null  (用于分支拓扑)
+                          ├─ from_location: string (起点描述)
+                          └─ to_location: string  (终点描述)
+                              └─ devices[]
+                                  └─ <b>Device</b>
+                                      ├─ type: <span style="color:#1565c0;">插座 | 连接器 | 灯 | 设备端子</span>
+                                      ├─ rating: { V, A }  (额定值)
+                                      └─ quantity: N
+</div>
+
+<h3>拓扑示例</h3>
+
+<div class="tree">
+<span style="font-weight:600;">照明线路 (滤波器 DL-2X32C55)</span>
+  trunk: 滤波器 → 灯区接线盒  (YZW 3×6mm², 18m)
+    ├─ branch: 接线盒 → 灯×4  (YZW 3×2.5mm², 6m/根)
+    └─ branch: 接线盒 → 灯×5  (YZW 3×2.5mm², 8m/根)
+
+<span style="font-weight:600;">转台线路 (滤波器 DL-4X63C55)  ← 拖链场景</span>
+  trunk: 滤波器 → 拖链入口  (YZW 4×16mm², 22m)
+    └─ parallel ×3: 拖链内  (ZC-TRVV 4×16mm², 38m/根, 柔性电缆)
+         └─ 转台端子 (380V, 63A, 工业连接器 ×1)
+
+<span style="font-weight:600;">天线塔插座线路 (滤波器 DL-2X32C55)</span>
+  trunk: 滤波器 → 开口板接线盒  (YZW 3×6mm², 25m)
+    ├─ branch: 10A 插座 ×2  (YZW 3×2.5mm², 3m)
+    └─ branch: 16A 插座 ×2  (YZW 3×4mm², 3m)
+</div>
+
+<!-- ==================== API 设计 ==================== -->
+<h2>四、API 设计</h2>
+
+<div class="api-grid">
+<div class="api-card">
+<strong>项目管理</strong><br>
+<code>GET    /api/projects</code><br>
+<code>POST   /api/projects</code><br>
+<code>GET    /api/projects/:id</code><br>
+<code>PUT    /api/projects/:id</code><br>
+<code>DELETE /api/projects/:id</code>
+</div>
+<div class="api-card">
+<strong>线路管理</strong><br>
+<code>POST   /api/projects/:id/circuits</code><br>
+<code>PUT    /api/circuits/:id</code><br>
+<code>DELETE /api/circuits/:id</code><br>
+<code>POST   /api/segments</code><br>
+<code>PUT    /api/segments/:id</code>
+</div>
+<div class="api-card">
+<strong>计算 &amp; 导出</strong><br>
+<code>POST   /api/projects/:id/calculate</code><br>
+<code>GET    /api/projects/:id/bom</code><br>
+<code>GET    /api/projects/:id/gb-check</code><br>
+<code>GET    /api/projects/:id/export</code>
+</div>
+<div class="api-card">
+<strong>滤波器库</strong><br>
+<code>GET    /api/filters</code><br>
+<code>POST   /api/filters</code><br>
+<code>PUT    /api/filters/:id</code><br>
+<code>POST   /api/filters/import</code><br>
+<code>GET    /api/filters/export</code>
+</div>
+<div class="api-card">
+<strong>线缆 &amp; 国标</strong><br>
+<code>GET    /api/cables</code><br>
+<code>PUT    /api/cables/:id</code><br>
+<code>POST   /api/cables/import</code><br>
+<code>GET    /api/gb-tables</code><br>
+<code>PUT    /api/gb-tables/:name</code>
+</div>
+<div class="api-card">
+<strong>价格 &amp; 系统</strong><br>
+<code>GET    /api/prices</code><br>
+<code>POST   /api/prices/import</code><br>
+<code>GET    /api/prices/history</code><br>
+<code>GET    /api/system/status</code>
+</div>
+</div>
+
+<!-- ==================== GB 安全校验 ==================== -->
+<h2>五、GB 安全校验模块</h2>
+
+<table>
+<tr><th>检查项</th><th>依据标准</th><th>规则</th><th>输出</th></tr>
+<tr>
+  <td>载流量</td>
+  <td>GB/T 16895</td>
+  <td>I<sub>z</sub> · K<sub>t</sub> · K<sub>g</sub> ≥ 1.25 × I<sub>b</sub><br>
+  (载流量 × 温度系数 × 并列系数 ≥ 回路电流 × 1.25)</td>
+  <td><span class="check-pass">✓</span> 通过 / <span class="check-warn">✗</span> 建议增大截面</td>
+</tr>
+<tr>
+  <td>电压降</td>
+  <td>GB 50054 §3.4</td>
+  <td>ΔU% = (√3 × I × L × cosφ) / (γ × S × U) × 100% ≤ 5%</td>
+  <td><span class="check-pass">✓</span> 通过 / <span class="check-warn">✗</span> 压降超标</td>
+</tr>
+<tr>
+  <td>热稳定</td>
+  <td>GB 50217</td>
+  <td>S ≥ (I<sub>k</sub> × √t) / K</td>
+  <td><span class="check-pass">✓</span> 满足 / <span class="check-warn">✗</span> 不满足</td>
+</tr>
+<tr>
+  <td>机械强度</td>
+  <td>GB 50054</td>
+  <td>动力线 ≥ 2.5mm², 照明 ≥ 1.5mm²</td>
+  <td><span class="check-pass">✓</span> 满足 / <span class="check-warn">✗</span> 不满足</td>
+</tr>
+<tr>
+  <td>电压等级</td>
+  <td>GB 50052</td>
+  <td>滤波器额定电压 ≥ 系统标称电压</td>
+  <td><span class="check-pass">✓</span> 匹配 / <span class="check-warn">✗</span> 不匹配</td>
+</tr>
+</table>
+
+<!-- ==================== 项目结构 ==================== -->
+<h2>六、项目文件结构</h2>
+
+<div class="arch-box" style="font-size:12px;">
+/mnt/d/cc/pdc/
+├── <b>package.json</b>                    # 工作区根配置
+├── <b>tsconfig.json</b>                   # TypeScript 配置
+│
+├── <b>client/</b>                          # React 前端
+│   ├── package.json
+│   ├── vite.config.ts
+│   ├── index.html
+│   └── src/
+│       ├── main.tsx
+│       ├── App.tsx                       # 路由: / /admin/*  /projects/*
+│       ├── types/index.ts                # 共享类型定义
+│       ├── api/client.ts                 # REST 客户端封装
+│       ├── <b>pages/</b>
+│       │   ├── ProjectList.tsx           # 项目列表首页
+│       │   ├── ProjectEditor.tsx         # 项目编辑 (房间+线路)
+│       │   ├── BomView.tsx               # BOM 结果展示
+│       │   └── <b>admin/</b>
+│       │       ├── FilterLibrary.tsx     # 滤波器库管理
+│       │       ├── CableSpecs.tsx        # 线缆规格管理
+│       │       ├── GBTables.tsx          # 国标数据管理
+│       │       ├── PriceManage.tsx       # 价格管理
+│       │       └── ImportWizard.tsx      # 批量导入向导
+│       ├── <b>components/</b>
+│       │   ├── Layout.tsx
+│       │   ├── CircuitForm.tsx           # 线路编辑表单
+│       │   ├── CableSegmentForm.tsx      # 线段编辑
+│       │   ├── FilterSelector.tsx        # 滤波器选择器
+│       │   ├── BomTable.tsx              # BOM 表格组件
+│       │   └── ComplianceReport.tsx      # GB 安全校验报告
+│       └── utils/export.ts              # 导出工具
+│
+├── <b>server/</b>                          # Node.js 后端
+│   ├── package.json
+│   ├── tsconfig.json
+│   └── src/
+│       ├── index.ts                     # Express 入口 + SQLite 初始化
+│       ├── db/
+│       │   ├── schema.ts                # 数据库表定义
+│       │   └── seed.ts                  # 初始数据 (从 Excel 导入)
+│       ├── <b>routes/</b>
+│       │   ├── projects.ts              # 项目 CRUD
+│       │   ├── circuits.ts              # 线路 CRUD
+│       │   ├── filters.ts               # 滤波器库 CRUD + 导入/导出
+│       │   ├── cables.ts                # 线缆规格 CRUD + 导入
+│       │   ├── gb-tables.ts             # 国标数据管理
+│       │   ├── prices.ts                # 价格管理
+│       │   └── export.ts                # Excel 导出
+│       ├── <b>engine/</b>
+│       │   ├── calculator.ts            # 长度 → BOM → 成本
+│       │   ├── selector.ts              # 滤波器 → 线缆规格
+│       │   └── <b>gb/</b>
+│       │       ├── ampacity.ts          # 载流量表查询
+│       │       ├── voltage-drop.ts      # 电压降计算
+│       │       └── safety-check.ts      # 综合安全校验
+│       └── <b>data/</b>
+│           ├── seed-filters.json        # 初始滤波器数据
+│           ├── seed-cables.json         # 初始线缆规格
+│           └── <b>gb-tables/</b>           # 国标数据 (带版本号)
+│               ├── ampacity.json
+│               ├── derating.json
+│               └── safety-rules.json
+│
+└── <b>scripts/</b>
+    ├── import-from-excel.ts             # 从现有 Excel 导入工具
+    └── seed-db.ts                       # 数据库初始化
+</div>
+
+<!-- ==================== 技术栈 ==================== -->
+<h2>七、技术栈</h2>
+
+<table>
+<tr><th>层级</th><th>技术</th><th>版本</th><th>用途</th></tr>
+<tr><td>前端框架</td><td>React</td><td>18+</td><td>UI 组件化</td></tr>
+<tr><td>前端构建</td><td>Vite</td><td>5+</td><td>快速开发 &amp; 构建</td></tr>
+<tr><td>UI 组件库</td><td>Ant Design</td><td>5+</td><td>表格/表单/弹窗/布局 (中后台首选)</td></tr>
+<tr><td>后端框架</td><td>Express</td><td>4+</td><td>REST API</td></tr>
+<tr><td>语言</td><td>TypeScript</td><td>5+</td><td>前后端统一</td></tr>
+<tr><td>数据库</td><td>SQLite (better-sqlite3)</td><td>latest</td><td>轻量嵌入式，零配置</td></tr>
+<tr><td>Excel 处理</td><td>exceljs</td><td>4+</td><td>导入/导出 .xlsx</td></tr>
+<tr><td>文件上传</td><td>multer</td><td>-</td><td>批量导入文件</td></tr>
+<tr><td>部署</td><td>pm2 + Nginx</td><td>-</td><td>内网服务器运行</td></tr>
+</table>
+
+<!-- ==================== 版本更新 ==================== -->
+<h2>八、国标数据版本管理</h2>
+
+<table>
+<tr><th>机制</th><th>说明</th></tr>
+<tr><td>版本号</td><td>国标数据文件内置版本号 (如 <code>gb-ampacity-v2025-1.json</code>)</td></tr>
+<tr><td>更新方式</td><td>手动导入新版本文件 / 系统启动时检查更新</td></tr>
+<tr><td>变更追溯</td><td>每次更新记录: 时间、版本、变更内容摘要</td></tr>
+<tr><td>回滚</td><td>保留历史版本，支持回退</td></tr>
+<tr><td>通知</td><td>当有新版标准发布时，系统提示管理员更新</td></tr>
+</table>
+
+<!-- ==================== 决策记录 ==================== -->
+<h2>九、审查决策记录</h2>
+
+<table>
+<tr><th>#</th><th>决策</th><th>结论</th></tr>
+<tr><td>D1</td><td>范围拆分</td><td>Phase 1a (表单版核心引擎) → Phase 1b (可视化编辑器)</td></tr>
+<tr><td>D2</td><td>项目结构</td><td>Vite monorepo，前后端同仓库</td></tr>
+<tr><td>D3</td><td>数据模型</td><td>Circuit → CableSegment 层次结构，支持直连/分支/并联/拖链</td></tr>
+<tr><td>D4</td><td>GB 国标</td><td>核心规则内置 (载流量表+电压降)，配置表形式，安全项独立模块</td></tr>
+<tr><td>D5</td><td>滤波器库</td><td>从现有 Excel 物料表自动导入，后续补全尺寸参数</td></tr>
+<tr><td>D6</td><td>数据管理</td><td>全部参考数据通过 Web 界面管理，支持单条编辑和批量导入</td></tr>
+</table>
+
+<!-- ==================== 未决问题 ==================== -->
+<h2>十、待解决</h2>
+
+<table>
+<tr><th>问题</th><th>说明</th><th>谁来定</th></tr>
+<tr><td>拖链长度计算公式</td><td>转台旋转半径 → 拖链内电缆长度，需与工程师确认</td><td>你 + 工程师</td></tr>
+<tr><td>多房间同项目</td><td>暗室+控制室+功放室是否合并在一个项目里计算</td><td>你</td></tr>
+<tr><td>初始 GB 数据范围</td><td>先覆盖哪些电缆类型和敷设方式的载流量表</td><td>你</td></tr>
+</table>
+
+<p style="text-align:right;font-size:12px;color:#999;margin-top:40px;">Phase 1a Architecture · v0.1 · 2026-05-10</p>
+
+</body>
+</html>
