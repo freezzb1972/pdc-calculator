@@ -1,5 +1,6 @@
 // 计算引擎：根据线路配置生成 BOM 和成本
 import { getDb } from '../db/schema.js';
+import { CEILING_HEIGHT_OFFSET, CABLE_EXTRA_LENGTH } from '../config.js';
 
 interface BomItem {
   category: string;
@@ -110,16 +111,18 @@ export function calculateBom(projectId: number): BomResult {
   };
 }
 
-// Estimate cable length from room dimensions and positions
+// Estimate cable length from room dimensions and positions.
+// NOTE: client/src/components/RoomLayout.tsx has a copy of this formula
+// for instant visual feedback during drag; keep both in sync.
 export function estimateCableLength(
   roomLength: number, roomWidth: number, roomHeight: number,
   fromX: number, fromY: number, toX: number, toY: number,
   viaCeiling: boolean = true,
-  heightOffset: number = 2.5
+  heightOffset: number = CEILING_HEIGHT_OFFSET
 ): number {
   // Simple Manhattan distance along walls/ceiling
   const horizontal = Math.abs(fromX - toX) + Math.abs(fromY - toY);
   const vertical = viaCeiling ? (roomHeight - heightOffset) * 2 : 0;
-  const extra = 2; // Allowance for connections at both ends
+  const extra = CABLE_EXTRA_LENGTH; // Allowance for connections at both ends
   return Math.round((horizontal + vertical + extra) * 10) / 10;
 }

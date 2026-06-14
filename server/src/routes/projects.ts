@@ -1,6 +1,7 @@
 import { Router, Request, Response } from 'express';
 import { getDb } from '../db/schema.js';
 import { estimateCableLength } from '../engine/calculator.js';
+import { validate } from '../validate.js';
 
 export const projectsRouter = Router();
 
@@ -15,6 +16,14 @@ projectsRouter.put('/room/:id', (req: Request, res: Response) => {
 });
 
 projectsRouter.post('/room', (req: Request, res: Response) => {
+  const v = validate(req.body, {
+    project_id: { required: true, type: 'number' },
+    room_type: { required: true, type: 'string' },
+    length_m: { required: true, type: 'number', min: 0.1 },
+    width_m: { required: true, type: 'number', min: 0.1 },
+    height_m: { required: true, type: 'number', min: 0.1 },
+  });
+  if (!v.valid) { res.status(400).json({ error: v.errors.join('; ') }); return; }
   const db = getDb();
   const { project_id, room_type, length_m, width_m, height_m, light_model, light_count, light_circuits } = req.body;
   const result = db.prepare(
@@ -89,6 +98,8 @@ projectsRouter.put('/circuits/segment-route/:id', (req: Request, res: Response) 
 });
 
 projectsRouter.post('/', (req: Request, res: Response) => {
+  const v = validate(req.body, { name: { required: true, type: 'string', minLength: 1 } });
+  if (!v.valid) { res.status(400).json({ error: v.errors.join('; ') }); return; }
   const db = getDb();
   const { name, description } = req.body;
   const result = db.prepare('INSERT INTO projects (name, description) VALUES (?, ?)').run(name, description || '');

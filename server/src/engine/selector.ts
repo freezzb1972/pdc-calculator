@@ -1,5 +1,6 @@
 // 选型引擎：根据滤波器参数自动推荐线缆规格和附件类型
 import { getDb } from '../db/schema.js';
+import { LOAD_SAFETY_FACTOR, DRAG_CHAIN_STRAIGHT_MARGIN } from '../config.js';
 
 interface FilterParams {
   current_rating_a: number;
@@ -19,7 +20,7 @@ interface CableRecommendation {
 
 export function recommendCable(filter: FilterParams): CableRecommendation | null {
   const db = getDb();
-  const loadCurrent = filter.current_rating_a * 1.25; // 1.25 safety factor
+  const loadCurrent = filter.current_rating_a * LOAD_SAFETY_FACTOR;
 
   // Find matching selection rule
   const rule = db.prepare(`

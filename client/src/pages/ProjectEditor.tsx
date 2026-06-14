@@ -163,6 +163,7 @@ function SegmentForm({ visible, onClose, onSave, initial, circuitId, parentSegme
   parentSegments: CableSegment[];
   circuitLoadA?: number;
 }) {
+  const LOAD_SAFETY_FACTOR = 1.25; // keep in sync with server/src/config.ts
   const [cables, setCables] = useState<any[]>([]);
   const [highlightCable, setHighlightCable] = useState<number | null>(null);
   const [form] = Form.useForm();
@@ -179,7 +180,7 @@ function SegmentForm({ visible, onClose, onSave, initial, circuitId, parentSegme
   // Auto-recommend: highlight cable that meets load requirement
   useEffect(() => {
     if (!circuitLoadA || cables.length === 0) return;
-    const required = circuitLoadA * 1.25;
+    const required = circuitLoadA * LOAD_SAFETY_FACTOR;
     const match = cables.find(c => c.max_current_a >= required);
     if (match) setHighlightCable(match.id);
   }, [circuitLoadA, cables, visible]);
@@ -223,7 +224,7 @@ function SegmentForm({ visible, onClose, onSave, initial, circuitId, parentSegme
         </Form.Item>
         {highlightCable && circuitLoadA && (
           <div style={{ padding: '8px 12px', background: '#fffbe6', border: '1px solid #ffe58f', borderRadius: 6, marginBottom: 12 }}>
-            推荐: 负载{circuitLoadA}A × 1.25 = {(circuitLoadA * 1.25).toFixed(1)}A，推荐使用标★电缆
+            推荐: 负载{circuitLoadA}A × {LOAD_SAFETY_FACTOR} = {(circuitLoadA * LOAD_SAFETY_FACTOR).toFixed(1)}A，推荐使用标★电缆
           </div>
         )}
         <Space style={{ width: '100%' }} size={16}>

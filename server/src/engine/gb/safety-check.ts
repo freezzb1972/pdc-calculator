@@ -1,5 +1,6 @@
 // GB 安全校验引擎：对每条线路执行独立安全检查
 import { getDb } from '../../db/schema.js';
+import { LOAD_SAFETY_FACTOR, COPPER_CONDUCTIVITY } from '../../config.js';
 
 export interface CheckResult {
   check_name: string;
@@ -49,12 +50,12 @@ export function runSafetyCheck(projectId: number): { results: CheckResult[]; sum
       for (const seg of segments) {
         // Check 2: 载流量校验 (Iz ≥ 1.25 × Ib)
         if (seg.max_current_a && loadCurrent > 0) {
-          const required = loadCurrent * 1.25;
+          const required = loadCurrent * LOAD_SAFETY_FACTOR;
           if (seg.max_current_a >= required) {
-            results.push({ check_name: '载流量校验', standard: 'GB/T 16895', status: 'pass', message: `电缆${seg.model_name}载流量${seg.max_current_a}A ≥ ${loadCurrent}A×1.25=${required.toFixed(1)}A`, detail: `${circuitLabel}` });
+            results.push({ check_name: '载流量校验', standard: 'GB/T 16895', status: 'pass', message: `电缆${seg.model_name}载流量${seg.max_current_a}A ≥ ${loadCurrent}A×${LOAD_SAFETY_FACTOR}=${required.toFixed(1)}A`, detail: `${circuitLabel}` });
             passCount++;
           } else {
-            results.push({ check_name: '载流量校验', standard: 'GB/T 16895', status: 'fail', message: `电缆${seg.model_name}载流量${seg.max_current_a}A < ${loadCurrent}A×1.25=${required.toFixed(1)}A，需增大截面`, detail: `${circuitLabel}` });
+            results.push({ check_name: '载流量校验', standard: 'GB/T 16895', status: 'fail', message: `电缆${seg.model_name}载流量${seg.max_current_a}A < ${loadCurrent}A×${LOAD_SAFETY_FACTOR}=${required.toFixed(1)}A，需增大截面`, detail: `${circuitLabel}` });
             failCount++;
           }
         }
@@ -96,7 +97,7 @@ export function calcVoltageDrop(
   current_A: number, length_m: number, cross_section_mm2: number,
   isThreePhase: boolean = true, cosPhi: number = 0.85
 ): number {
-  const conductivity = 56; // Copper conductivity at 70°C (m/Ω·mm²)
+  const conductivity = COPPER_CONDUCTIVITY; // Copper conductivity at 70°C (m/Ω·mm²)
   const R = length_m / (conductivity * cross_section_mm2);
   const X = 0.08 * length_m / 1000; // Approximate reactance
   const I = current_A;

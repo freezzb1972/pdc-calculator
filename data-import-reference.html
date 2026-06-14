@@ -1,0 +1,476 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PDC Calculator - 数据导入格式参考</title>
+<style>
+  :root {
+    --bg: #f5f5f5;
+    --card-bg: #fff;
+    --text: #333;
+    --muted: #888;
+    --border: #e8e8e8;
+    --blue: #1677ff;
+    --green: #52c41a;
+    --orange: #fa8c16;
+    --red: #ff4d4f;
+    --purple: #722ed1;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; background: var(--bg); color: var(--text); line-height: 1.6; padding: 24px; }
+  .container { max-width: 960px; margin: 0 auto; }
+  h1 { font-size: 24px; margin-bottom: 8px; }
+  .subtitle { color: var(--muted); margin-bottom: 32px; font-size: 14px; }
+  h2 { font-size: 18px; margin: 32px 0 16px; padding-bottom: 8px; border-bottom: 2px solid var(--blue); }
+  h3 { font-size: 15px; margin: 24px 0 12px; color: var(--blue); }
+
+  .card { background: var(--card-bg); border-radius: 8px; padding: 20px 24px; margin-bottom: 16px; box-shadow: 0 1px 3px rgba(0,0,0,0.06); }
+  .card-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px; }
+  .card-header h4 { font-size: 15px; }
+  .badge { font-size: 12px; padding: 2px 10px; border-radius: 100px; font-weight: 500; }
+  .badge-required { background: #fff2f0; color: var(--red); border: 1px solid #ffccc7; }
+  .badge-optional { background: #f6ffed; color: var(--green); border: 1px solid #b7eb8f; }
+
+  table { width: 100%; border-collapse: collapse; font-size: 13px; }
+  th { background: #fafafa; padding: 8px 12px; text-align: left; font-weight: 600; border-bottom: 2px solid var(--border); white-space: nowrap; }
+  td { padding: 8px 12px; border-bottom: 1px solid var(--border); }
+  tr:last-child td { border-bottom: none; }
+  .col-name { font-weight: 500; color: var(--blue); }
+  .col-type { color: var(--muted); font-size: 12px; }
+  .col-default { color: var(--muted); font-size: 12px; }
+  .col-notes { color: var(--muted); font-size: 12px; max-width: 200px; }
+
+  .example { background: #f9f9f9; border: 1px solid var(--border); border-radius: 6px; padding: 12px 16px; margin-top: 12px; }
+  .example-label { font-size: 12px; color: var(--muted); margin-bottom: 6px; }
+  .example code { font-size: 13px; color: #333; word-break: break-all; }
+
+  .summary-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 12px; margin-top: 16px; }
+  .summary-item { background: #fafafa; border-radius: 6px; padding: 12px 16px; border-left: 3px solid var(--blue); }
+  .summary-item .num { font-size: 22px; font-weight: 700; color: var(--blue); }
+  .summary-item .label { font-size: 12px; color: var(--muted); margin-top: 2px; }
+
+  .tag { display: inline-block; font-size: 11px; padding: 1px 8px; border-radius: 4px; margin: 1px 2px; background: #e6f4ff; color: var(--blue); }
+  .tag-green { background: #f6ffed; color: var(--green); }
+  .tag-orange { background: #fff7e6; color: var(--orange); }
+
+  .note { background: #fffbe6; border: 1px solid #ffe58f; border-radius: 6px; padding: 10px 16px; font-size: 13px; color: #8c6d00; margin-top: 12px; }
+
+  .toc { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 24px; }
+  .toc a { font-size: 13px; color: var(--blue); text-decoration: none; padding: 4px 12px; background: #e6f4ff; border-radius: 100px; }
+  .toc a:hover { background: #bae0ff; }
+
+  .separator { border: none; border-top: 1px solid var(--border); margin: 32px 0; }
+
+  @media print {
+    body { background: #fff; padding: 0; }
+    .card { box-shadow: none; border: 1px solid #e0e0e0; break-inside: avoid; }
+  }
+</style>
+</head>
+<body>
+<div class="container">
+
+<h1>PDC Calculator — 数据导入格式参考</h1>
+<p class="subtitle">EMC 暗室配电计算工具 · 所有可导入数据类型、字段规格及示例</p>
+
+<div class="toc">
+  <a href="#excel">Excel 导入</a>
+  <a href="#filters">滤波器</a>
+  <a href="#cables">电缆</a>
+  <a href="#prices">价格</a>
+  <a href="#gb">GB 标准</a>
+  <a href="#rules">选型规则</a>
+  <a href="#projects">项目/房间/线路</a>
+  <a href="#schema">完整数据库</a>
+</div>
+
+<!-- ==================== EXCEL ==================== -->
+<h2 id="excel">一、Excel 导入</h2>
+
+<div class="card">
+  <div class="card-header"><h4>命令行</h4></div>
+  <table>
+    <tr><td style="width:80px;font-weight:600;">导入</td><td><code>npm run import-excel &lt;文件.xlsx&gt; [--type=filters|cables|all] [--sheet=SheetName] [--dry-run]</code></td></tr>
+    <tr><td style="font-weight:600;">库</td><td>exceljs v4.4.0</td></tr>
+    <tr><td style="font-weight:600;">匹配</td><td>列头模糊匹配（大小写不敏感、子串包含）</td></tr>
+  </table>
+</div>
+
+<div class="card">
+  <div class="card-header">
+    <h4>Sheet 1 — 滤波器</h4>
+    <span class="badge badge-required">1 必填</span>
+  </div>
+  <table>
+    <thead><tr><th>Excel 列头关键字</th><th>必填</th><th>类型</th><th>默认值</th><th>说明</th></tr></thead>
+    <tbody>
+      <tr><td class="col-name">型号 / 名称 / model</td><td><span class="badge badge-required">必填</span></td><td class="col-type">string (唯一)</td><td class="col-default">—</td><td class="col-notes">如 DL-2X16C55-JCL-H</td></tr>
+      <tr><td>厂商 / 厂家 / 制造商 / 品牌 / manufacturer</td><td><span class="badge badge-optional">可选</span></td><td class="col-type">string</td><td class="col-default">坚力</td><td class="col-notes"></td></tr>
+      <tr><td>电压 / 额定电压 / voltage</td><td><span class="badge badge-optional">可选</span></td><td class="col-type">number</td><td class="col-default">空</td><td class="col-notes">额定电压 V</td></tr>
+      <tr><td>电流 / 额定电流 / current</td><td><span class="badge badge-optional">可选</span></td><td class="col-type">number</td><td class="col-default">空</td><td class="col-notes">额定电流 A</td></tr>
+      <tr><td>相数 / 相 / phase</td><td><span class="badge badge-optional">可选</span></td><td class="col-type">string</td><td class="col-default">三相</td><td class="col-notes">单相 / 三相</td></tr>
+      <tr><td>线数 / 线 / wire / 芯数</td><td><span class="badge badge-optional">可选</span></td><td class="col-type">integer</td><td class="col-default">4</td><td class="col-notes"></td></tr>
+      <tr><td>单价 / 价格 / price</td><td><span class="badge badge-optional">可选</span></td><td class="col-type">number</td><td class="col-default">0</td><td class="col-notes"></td></tr>
+      <tr><td>类别 / 类型 / category / 用途</td><td><span class="badge badge-optional">可选</span></td><td class="col-type">string</td><td class="col-default">暗室设备</td><td class="col-notes">照明 / 暗室设备 / EUT / 转台</td></tr>
+    </tbody>
+  </table>
+  <div class="example">
+    <div class="example-label">示例 Excel 行</div>
+    <code>DL-2X16C55-JCL-H | 坚力 | 250 | 16 | 单相 | 2 | 909.87 | 照明</code>
+  </div>
+</div>
+
+<div class="card">
+  <div class="card-header">
+    <h4>Sheet 2 — 电缆规格</h4>
+    <span class="badge badge-required">1 必填</span>
+  </div>
+  <table>
+    <thead><tr><th>Excel 列头关键字</th><th>必填</th><th>类型</th><th>默认值</th><th>说明</th></tr></thead>
+    <tbody>
+      <tr><td class="col-name">型号 / 名称 / model</td><td><span class="badge badge-required">必填</span></td><td class="col-type">string (唯一)</td><td class="col-default">—</td><td class="col-notes">如 YZW 3×1.5mm²</td></tr>
+      <tr><td>导体 / 导体材料 / 材质 / conductor</td><td><span class="badge badge-optional">可选</span></td><td class="col-type">string</td><td class="col-default">铜芯</td><td class="col-notes"></td></tr>
+      <tr><td>绝缘 / 绝缘材料 / insulation</td><td><span class="badge badge-optional">可选</span></td><td class="col-type">string</td><td class="col-default">PVC</td><td class="col-notes"></td></tr>
+      <tr><td>截面 / 截面积 / cross / mm²</td><td><span class="badge badge-optional">可选</span></td><td class="col-type">number</td><td class="col-default">0</td><td class="col-notes">单位 mm²</td></tr>
+      <tr><td>芯数 / core</td><td><span class="badge badge-optional">可选</span></td><td class="col-type">integer</td><td class="col-default">3</td><td class="col-notes"></td></tr>
+      <tr><td>载流量 / 电流 / current / max</td><td><span class="badge badge-optional">可选</span></td><td class="col-type">number</td><td class="col-default">0</td><td class="col-notes">最大载流量 A</td></tr>
+      <tr><td>单价 / 价格 / price</td><td><span class="badge badge-optional">可选</span></td><td class="col-type">number</td><td class="col-default">0</td><td class="col-notes"></td></tr>
+    </tbody>
+  </table>
+  <div class="example">
+    <div class="example-label">示例 Excel 行</div>
+    <code>YZW 3×1.5mm² | 铜芯 | PVC | 1.5 | 3 | 15 | 2.5</code>
+  </div>
+</div>
+
+<div class="note">空行、型号为 "-" 或与表头相同的行会被自动跳过。重复型号静默忽略。</div>
+
+<hr class="separator">
+
+<!-- ==================== JSON API IMPORTS ==================== -->
+<h2 id="filters">二、JSON API 批量导入 — 滤波器</h2>
+
+<div class="card">
+  <div class="card-header">
+    <h4>POST /api/filters/import</h4>
+    <span class="tag">INSERT OR REPLACE</span>
+  </div>
+  <table>
+    <thead><tr><th>字段</th><th>必填</th><th>类型</th><th>默认值</th><th>说明</th></tr></thead>
+    <tbody>
+      <tr><td class="col-name">model_name</td><td><span class="badge badge-required">必填</span></td><td class="col-type">string</td><td class="col-default">—</td><td class="col-notes">唯一标识</td></tr>
+      <tr><td>manufacturer</td><td><span class="badge badge-optional">可选</span></td><td class="col-type">string</td><td class="col-default">坚力</td><td class="col-notes"></td></tr>
+      <tr><td>voltage_rating_v</td><td><span class="badge badge-optional">可选</span></td><td class="col-type">number</td><td class="col-default">null</td><td class="col-notes"></td></tr>
+      <tr><td>current_rating_a</td><td><span class="badge badge-optional">可选</span></td><td class="col-type">number</td><td class="col-default">null</td><td class="col-notes"></td></tr>
+      <tr><td>phases</td><td><span class="badge badge-optional">可选</span></td><td class="col-type">string</td><td class="col-default">单相</td><td class="col-notes">单相 / 三相</td></tr>
+      <tr><td>wire_count</td><td><span class="badge badge-optional">可选</span></td><td class="col-type">integer</td><td class="col-default">2</td><td class="col-notes"></td></tr>
+      <tr><td>unit_price</td><td><span class="badge badge-optional">可选</span></td><td class="col-type">number</td><td class="col-default">0</td><td class="col-notes"></td></tr>
+      <tr><td>category</td><td><span class="badge badge-optional">可选</span></td><td class="col-type">string</td><td class="col-default">暗室设备</td><td class="col-notes">照明 / 暗室设备 / EUT / 转台</td></tr>
+    </tbody>
+  </table>
+  <div class="example">
+    <div class="example-label">JSON 请求体</div>
+    <code>{"filters": [{"model_name": "DL-2X16C55-JCL-H", "manufacturer": "坚力", "voltage_rating_v": 250, "current_rating_a": 16, "phases": "单相", "wire_count": 2, "unit_price": 909.87, "category": "照明"}]}</code>
+  </div>
+</div>
+
+<hr class="separator">
+
+<!-- ==================== CABLES ==================== -->
+<h2 id="cables">三、JSON API 批量导入 — 电缆规格</h2>
+
+<div class="card">
+  <div class="card-header">
+    <h4>POST /api/cables/import</h4>
+    <span class="tag">INSERT OR REPLACE</span>
+  </div>
+  <table>
+    <thead><tr><th>字段</th><th>必填</th><th>类型</th><th>默认值</th><th>说明</th></tr></thead>
+    <tbody>
+      <tr><td class="col-name">model_name</td><td><span class="badge badge-required">必填</span></td><td class="col-type">string</td><td class="col-default">—</td><td class="col-notes">唯一标识</td></tr>
+      <tr><td>conductor_material</td><td><span class="badge badge-optional">可选</span></td><td class="col-type">string</td><td class="col-default">铜芯</td><td class="col-notes"></td></tr>
+      <tr><td>insulation</td><td><span class="badge badge-optional">可选</span></td><td class="col-type">string</td><td class="col-default">PVC</td><td class="col-notes"></td></tr>
+      <tr><td>cross_section_mm2</td><td><span class="badge badge-optional">可选</span></td><td class="col-type">number</td><td class="col-default">0</td><td class="col-notes"></td></tr>
+      <tr><td>core_count</td><td><span class="badge badge-optional">可选</span></td><td class="col-type">integer</td><td class="col-default">3</td><td class="col-notes"></td></tr>
+      <tr><td>max_current_a</td><td><span class="badge badge-optional">可选</span></td><td class="col-type">number</td><td class="col-default">0</td><td class="col-notes"></td></tr>
+      <tr><td>unit_price</td><td><span class="badge badge-optional">可选</span></td><td class="col-type">number</td><td class="col-default">0</td><td class="col-notes"></td></tr>
+    </tbody>
+  </table>
+  <div class="example">
+    <div class="example-label">JSON 请求体</div>
+    <code>{"cables": [{"model_name": "YZW 3×1.5mm²", "conductor_material": "铜芯", "insulation": "PVC", "cross_section_mm2": 1.5, "core_count": 3, "max_current_a": 15, "unit_price": 2.5}]}</code>
+  </div>
+</div>
+
+<hr class="separator">
+
+<!-- ==================== PRICES ==================== -->
+<h2 id="prices">四、JSON API 批量导入 — 价格更新</h2>
+
+<div class="card">
+  <div class="card-header">
+    <h4>POST /api/prices/import</h4>
+    <span class="tag tag-orange">仅更新，不创建新记录</span>
+  </div>
+  <table>
+    <thead><tr><th>字段</th><th>必填</th><th>类型</th><th>说明</th></tr></thead>
+    <tbody>
+      <tr><td class="col-name">type</td><td><span class="badge badge-required">必填</span></td><td class="col-type">"filter" | "cable"</td><td class="col-notes">更新滤波器的价格还是电缆的价格</td></tr>
+      <tr><td class="col-name">items[].id</td><td><span class="badge badge-required">必填</span></td><td class="col-type">integer</td><td class="col-notes">filters.id 或 cable_specs.id</td></tr>
+      <tr><td class="col-name">items[].unit_price</td><td><span class="badge badge-required">必填</span></td><td class="col-type">number</td><td class="col-notes">新单价</td></tr>
+    </tbody>
+  </table>
+  <div class="example">
+    <div class="example-label">JSON 请求体</div>
+    <code>{"type": "filter", "items": [{"id": 1, "unit_price": 950.00}, {"id": 2, "unit_price": 1200.00}]}</code>
+  </div>
+  <div class="note">旧价格自动写入 price_history 表，source 标记为 "batch_import"。</div>
+</div>
+
+<hr class="separator">
+
+<!-- ==================== GB STANDARDS ==================== -->
+<h2 id="gb">五、GB 标准数据（已内置种子数据，可通过 JSON API 覆盖）</h2>
+
+<div class="card">
+  <div class="card-header">
+    <h4>5.1 载流量表 — POST /api/gb-tables/import/ampacity</h4>
+    <span class="tag">INSERT OR REPLACE</span>
+  </div>
+  <table>
+    <thead><tr><th>字段</th><th>必填</th><th>类型</th><th>默认值</th><th>说明</th></tr></thead>
+    <tbody>
+      <tr><td class="col-name">cable_type</td><td><span class="badge badge-required">必填</span></td><td class="col-type">string</td><td class="col-default">—</td><td class="col-notes">PVC铜芯 / XLPE铜芯</td></tr>
+      <tr><td class="col-name">installation_method</td><td><span class="badge badge-required">必填</span></td><td class="col-type">string</td><td class="col-default">—</td><td class="col-notes">空气中敷设 / 穿管敷设</td></tr>
+      <tr><td class="col-name">cross_section_mm2</td><td><span class="badge badge-required">必填</span></td><td class="col-type">number</td><td class="col-default">—</td><td class="col-notes"></td></tr>
+      <tr><td class="col-name">current_rating_a</td><td><span class="badge badge-required">必填</span></td><td class="col-type">number</td><td class="col-default">—</td><td class="col-notes"></td></tr>
+      <tr><td>temperature_base</td><td><span class="badge badge-optional">可选</span></td><td class="col-type">integer</td><td class="col-default">30</td><td class="col-notes">基准温度 °C</td></tr>
+      <tr><td>version</td><td><span class="badge badge-optional">可选</span></td><td class="col-type">string</td><td class="col-default">GB/T 16895-2025</td><td class="col-notes"></td></tr>
+    </tbody>
+  </table>
+  <div class="example">
+    <div class="example-label">JSON 请求体</div>
+    <code>{"rows": [{"cable_type": "PVC铜芯", "installation_method": "空气中敷设", "cross_section_mm2": 1.5, "current_rating_a": 16.5, "temperature_base": 30, "version": "GB/T 16895.15-2022"}]}</code>
+  </div>
+  <div class="note">已内置 44 条载流量数据（PVC + XLPE × 两种敷设方式，截面 1.5–240 mm²）。</div>
+</div>
+
+<div class="card">
+  <div class="card-header"><h4>5.2 校正系数 — 种子数据内置</h4></div>
+  <table>
+    <thead><tr><th>校正类型</th><th>说明</th><th>示例</th></tr></thead>
+    <tbody>
+      <tr><td class="col-name">温度校正</td><td class="col-notes">25–60°C 环境温度对载流量的影响</td><td class="col-notes">40°C 时系数 0.87</td></tr>
+      <tr><td class="col-name">多回路并列校正</td><td class="col-notes">1–9+ 根电缆并列敷设的降容</td><td class="col-notes">3回路 系数 0.82</td></tr>
+      <tr><td class="col-name">穿管校正</td><td class="col-notes">电缆穿管敷设的降容系数</td><td class="col-notes">2根穿管 系数 0.80</td></tr>
+      <tr><td class="col-name">直埋敷设校正</td><td class="col-notes">直埋深度对载流量的影响</td><td class="col-notes"></td></tr>
+      <tr><td class="col-name">土壤热阻校正</td><td class="col-notes">土壤热阻系数的影响</td><td class="col-notes"></td></tr>
+      <tr><td class="col-name">谐波校正</td><td class="col-notes">谐波电流对中性线的影响</td><td class="col-notes">THD 15-33% 系数 0.86</td></tr>
+    </tbody>
+  </table>
+  <div class="note">已内置 31 条校正系数，无需额外提供。</div>
+</div>
+
+<div class="card">
+  <div class="card-header"><h4>5.3 安全校验规则 — 种子数据内置</h4></div>
+  <table>
+    <thead><tr><th>规则编号</th><th>规则名称</th><th>严重级别</th><th>说明</th></tr></thead>
+    <tbody>
+      <tr><td>GB50054-3.2.1</td><td>最小导体截面</td><td><span class="badge badge-required">error</span></td><td class="col-notes">动力≥2.5mm²，照明≥1.5mm²</td></tr>
+      <tr><td>GB50054-3.2.2</td><td>PE线最小截面</td><td><span class="badge badge-required">error</span></td><td class="col-notes">PE线截面与相线关系</td></tr>
+      <tr><td>GB50054-3.2.3</td><td>导体工作温度</td><td><span class="badge badge-required">error</span></td><td class="col-notes">≤70°C (PVC)</td></tr>
+      <tr><td>GB50054-4.3.1</td><td>载流量校验</td><td><span class="badge badge-required">error</span></td><td class="col-notes">I_z ≥ I_n ≥ I_b</td></tr>
+      <tr><td>GB50054-4.3.2</td><td>过载保护</td><td><span class="badge badge-required">error</span></td><td class="col-notes"></td></tr>
+      <tr><td>GB50054-4.3.3</td><td>短路保护</td><td><span class="badge badge-required">error</span></td><td class="col-notes">短路电流≥断路器分断能力</td></tr>
+      <tr><td>GB50054-5.4.1</td><td>电压降</td><td><span class="badge badge-optional">warning</span></td><td class="col-notes">ΔU ≤ 5%</td></tr>
+      <tr><td>GB50054-5.5.1</td><td>接地故障保护</td><td><span class="badge badge-required">error</span></td><td class="col-notes"></td></tr>
+      <tr><td>GB50054-6.1.1</td><td>电缆弯折半径</td><td><span class="badge badge-optional">warning</span></td><td class="col-notes">≥6倍外径</td></tr>
+      <tr><td>GB50054-7.1.1</td><td>防火隔离</td><td><span class="badge badge-optional">warning</span></td><td class="col-notes">供电与信号线隔离</td></tr>
+      <tr><td>—</td><td>其他4条</td><td>—</td><td class="col-notes">含电压等级匹配、多回路N线、拖链电缆特殊要求等</td></tr>
+    </tbody>
+  </table>
+  <div class="note">已内置 14 条安全规则（9 error + 5 warning），无需额外提供。</div>
+</div>
+
+<hr class="separator">
+
+<!-- ==================== SELECTION RULES ==================== -->
+<h2 id="rules">六、选型规则（已内置种子数据）</h2>
+
+<div class="card">
+  <div class="card-header"><h4>POST /api/selection-rules</h4></div>
+  <table>
+    <thead><tr><th>字段</th><th>必填</th><th>类型</th><th>说明</th></tr></thead>
+    <tbody>
+      <tr><td class="col-name">filter_current_min</td><td><span class="badge badge-optional">可选</span></td><td class="col-type">number</td><td class="col-notes">滤波器电流范围下限 A</td></tr>
+      <tr><td class="col-name">filter_current_max</td><td><span class="badge badge-optional">可选</span></td><td class="col-type">number</td><td class="col-notes">滤波器电流范围上限 A</td></tr>
+      <tr><td>phases</td><td><span class="badge badge-optional">可选</span></td><td class="col-type">string</td><td class="col-notes">单相 / 三相 / 直流</td></tr>
+      <tr><td>min_cross_section_mm2</td><td><span class="badge badge-optional">可选</span></td><td class="col-type">number</td><td class="col-notes"></td></tr>
+      <tr><td>recommended_cable_id</td><td><span class="badge badge-optional">可选</span></td><td class="col-type">integer</td><td class="col-notes">外键 → cable_specs.id</td></tr>
+      <tr><td>connector_type</td><td><span class="badge badge-optional">可选</span></td><td class="col-type">string</td><td class="col-notes">接线端子 / 铜鼻子 / 铜排</td></tr>
+      <tr><td>notes</td><td><span class="badge badge-optional">可选</span></td><td class="col-type">string</td><td class="col-notes">如 "照明或小功率设备"</td></tr>
+    </tbody>
+  </table>
+  <div class="note">已内置 16 条选型规则，无需额外提供。</div>
+</div>
+
+<hr class="separator">
+
+<!-- ==================== PROJECT DATA ==================== -->
+<h2 id="projects">七、项目/房间/线路（通过 UI 或 API 创建）</h2>
+
+<div class="card">
+  <div class="card-header"><h4>7.1 项目 — POST /api/projects</h4></div>
+  <table>
+    <thead><tr><th>字段</th><th>必填</th><th>类型</th></tr></thead>
+    <tbody>
+      <tr><td class="col-name">name</td><td><span class="badge badge-required">必填</span></td><td class="col-type">string</td></tr>
+      <tr><td>description</td><td><span class="badge badge-optional">可选</span></td><td class="col-type">string</td></tr>
+    </tbody>
+  </table>
+</div>
+
+<div class="card">
+  <div class="card-header"><h4>7.2 房间 — POST /api/projects/room</h4></div>
+  <table>
+    <thead><tr><th>字段</th><th>必填</th><th>类型</th><th>默认值</th><th>说明</th></tr></thead>
+    <tbody>
+      <tr><td class="col-name">project_id</td><td><span class="badge badge-required">必填</span></td><td class="col-type">integer</td><td class="col-default">—</td><td></td></tr>
+      <tr><td>room_type</td><td><span class="badge badge-optional">可选</span></td><td class="col-type">string</td><td class="col-default">暗室</td><td></td></tr>
+      <tr><td>length_m</td><td><span class="badge badge-optional">可选</span></td><td class="col-type">number</td><td class="col-default">10</td><td></td></tr>
+      <tr><td>width_m</td><td><span class="badge badge-optional">可选</span></td><td class="col-type">number</td><td class="col-default">10</td><td></td></tr>
+      <tr><td>height_m</td><td><span class="badge badge-optional">可选</span></td><td class="col-type">number</td><td class="col-default">6</td><td></td></tr>
+      <tr><td>light_model</td><td><span class="badge badge-optional">可选</span></td><td class="col-type">string</td><td class="col-default">空</td><td>照明滤波器型号</td></tr>
+      <tr><td>light_count</td><td><span class="badge badge-optional">可选</span></td><td class="col-type">integer</td><td class="col-default">0</td><td>照明数量</td></tr>
+      <tr><td>light_circuits</td><td><span class="badge badge-optional">可选</span></td><td class="col-type">integer</td><td class="col-default">0</td><td>照明回路数</td></tr>
+    </tbody>
+  </table>
+</div>
+
+<div class="card">
+  <div class="card-header"><h4>7.3 线路 — POST /api/circuits</h4></div>
+  <table>
+    <thead><tr><th>字段</th><th>必填</th><th>类型</th><th>默认值</th></tr></thead>
+    <tbody>
+      <tr><td class="col-name">room_id</td><td><span class="badge badge-required">必填</span></td><td class="col-type">integer</td><td class="col-default">—</td></tr>
+      <tr><td class="col-name">name</td><td><span class="badge badge-required">必填</span></td><td class="col-type">string</td><td class="col-default">—</td></tr>
+      <tr><td>filter_id</td><td><span class="badge badge-optional">可选</span></td><td class="col-type">integer</td><td class="col-default">null</td></tr>
+      <tr><td>purpose</td><td><span class="badge badge-optional">可选</span></td><td class="col-type">string</td><td class="col-default">设备</td></tr>
+      <tr><td>voltage_type</td><td><span class="badge badge-optional">可选</span></td><td class="col-type">string</td><td class="col-default">单相220V</td></tr>
+      <tr><td>load_current_a</td><td><span class="badge badge-optional">可选</span></td><td class="col-type">number</td><td class="col-default">0</td></tr>
+      <tr><td>notes</td><td><span class="badge badge-optional">可选</span></td><td class="col-type">string</td><td class="col-default">空</td></tr>
+    </tbody>
+  </table>
+</div>
+
+<div class="card">
+  <div class="card-header"><h4>7.4 电缆段 — POST /api/circuits/segments</h4></div>
+  <table>
+    <thead><tr><th>字段</th><th>必填</th><th>类型</th><th>默认值</th><th>说明</th></tr></thead>
+    <tbody>
+      <tr><td class="col-name">circuit_id</td><td><span class="badge badge-required">必填</span></td><td class="col-type">integer</td><td class="col-default">—</td><td></td></tr>
+      <tr><td>segment_type</td><td><span class="badge badge-optional">可选</span></td><td class="col-type">string</td><td class="col-default">trunk</td><td>trunk / branch / dragchain / parallel</td></tr>
+      <tr><td>cable_spec_id</td><td><span class="badge badge-optional">可选</span></td><td class="col-type">integer</td><td class="col-default">null</td><td></td></tr>
+      <tr><td>length_m</td><td><span class="badge badge-optional">可选</span></td><td class="col-type">number</td><td class="col-default">0</td><td></td></tr>
+      <tr><td>from_location</td><td><span class="badge badge-optional">可选</span></td><td class="col-type">string</td><td class="col-default">空</td><td></td></tr>
+      <tr><td>to_location</td><td><span class="badge badge-optional">可选</span></td><td class="col-type">string</td><td class="col-default">空</td><td></td></tr>
+      <tr><td>parent_segment_id</td><td><span class="badge badge-optional">可选</span></td><td class="col-type">integer</td><td class="col-default">null</td><td></td></tr>
+      <tr><td>parallel_count</td><td><span class="badge badge-optional">可选</span></td><td class="col-type">integer</td><td class="col-default">1</td><td></td></tr>
+    </tbody>
+  </table>
+</div>
+
+<div class="card">
+  <div class="card-header"><h4>7.5 设备 — POST /api/circuits/devices</h4></div>
+  <table>
+    <thead><tr><th>字段</th><th>必填</th><th>类型</th><th>默认值</th><th>说明</th></tr></thead>
+    <tbody>
+      <tr><td class="col-name">segment_id</td><td><span class="badge badge-required">必填</span></td><td class="col-type">integer</td><td class="col-default">—</td><td></td></tr>
+      <tr><td>device_type</td><td><span class="badge badge-optional">可选</span></td><td class="col-type">string</td><td class="col-default">插座</td><td>照明 / 天线塔 / 摄像头 / 转台 / 插座 / 功放 / 接收机 / 滤波器</td></tr>
+      <tr><td>model</td><td><span class="badge badge-optional">可选</span></td><td class="col-type">string</td><td class="col-default">空</td><td></td></tr>
+      <tr><td>rating_v</td><td><span class="badge badge-optional">可选</span></td><td class="col-type">number</td><td class="col-default">220</td><td></td></tr>
+      <tr><td>rating_a</td><td><span class="badge badge-optional">可选</span></td><td class="col-type">number</td><td class="col-default">10</td><td></td></tr>
+      <tr><td>quantity</td><td><span class="badge badge-optional">可选</span></td><td class="col-type">integer</td><td class="col-default">1</td><td></td></tr>
+      <tr><td>unit_price</td><td><span class="badge badge-optional">可选</span></td><td class="col-type">number</td><td class="col-default">0</td><td></td></tr>
+    </tbody>
+  </table>
+</div>
+
+<hr class="separator">
+
+<!-- ==================== SUMMARY ==================== -->
+<h2 id="schema">八、汇总 — 你需要准备的数据</h2>
+
+<div class="summary-grid">
+  <div class="summary-item">
+    <div class="num">1</div>
+    <div class="label">滤波器 Excel/JSON 导入（型号必填）</div>
+  </div>
+  <div class="summary-item">
+    <div class="num">2</div>
+    <div class="label">电缆规格 Excel/JSON 导入（型号必填）</div>
+  </div>
+  <div class="summary-item">
+    <div class="num">3</div>
+    <div class="label">价格更新 JSON 导入（id+价格）</div>
+  </div>
+  <div class="summary-item">
+    <div class="num">44条</div>
+    <div class="label">GB 载流量数据（已内置）</div>
+  </div>
+  <div class="summary-item">
+    <div class="num">31条</div>
+    <div class="label">校正系数（已内置）</div>
+  </div>
+  <div class="summary-item">
+    <div class="num">14条</div>
+    <div class="label">安全校验规则（已内置）</div>
+  </div>
+  <div class="summary-item">
+    <div class="num">16条</div>
+    <div class="label">选型规则（已内置）</div>
+  </div>
+  <div class="summary-item">
+    <div class="num">UI</div>
+    <div class="label">项目/房间/线路/设备通过 UI 创建</div>
+  </div>
+</div>
+
+<div class="note" style="margin-top:24px;font-size:14px;">
+  <strong>你只需要提供：</strong>滤波器型号清单 + 电缆规格清单（Excel 或 JSON格式均可）。<br>
+  GB 标准、安全规则、选型规则已全部内置种子数据，无需额外提供。<br>
+  <span style="color:var(--muted);margin-top:4px;display:inline-block;">项目、房间、线路、设备通过 Web UI 直接创建。</span>
+</div>
+
+<hr class="separator">
+
+<!-- ==================== FULL SCHEMA ==================== -->
+<h2>附录：完整数据库 Schema</h2>
+
+<div class="card">
+<table>
+<thead><tr><th>表名</th><th>主要字段</th><th>说明</th></tr></thead>
+<tbody>
+<tr><td class="col-name">filters</td><td class="col-notes">model_name, manufacturer, current_rating_a, phases, wire_count, unit_price, category</td><td class="col-notes">EMC 滤波器型号库</td></tr>
+<tr><td class="col-name">cable_specs</td><td class="col-notes">model_name, conductor_material, insulation, cross_section_mm2, core_count, max_current_a, unit_price</td><td class="col-notes">电缆规格库</td></tr>
+<tr><td class="col-name">gb_ampacity</td><td class="col-notes">cable_type, installation_method, cross_section_mm2, current_rating_a, temperature_base, version</td><td class="col-notes">GB 载流量表</td></tr>
+<tr><td class="col-name">gb_derating</td><td class="col-notes">factor_type, condition_desc, factor_value, version</td><td class="col-notes">校正/降容系数</td></tr>
+<tr><td class="col-name">gb_safety_rules</td><td class="col-notes">rule_code, rule_name, description, check_formula, severity, version</td><td class="col-notes">安全校验规则</td></tr>
+<tr><td class="col-name">selection_rules</td><td class="col-notes">filter_current_min, filter_current_max, phases, recommended_cable_id, connector_type</td><td class="col-notes">电缆选型规则</td></tr>
+<tr><td class="col-name">prices</td><td class="col-notes">item_type, item_id, old_price, new_price, changed_at, source</td><td class="col-notes">价格历史记录</td></tr>
+<tr><td class="col-name">projects</td><td class="col-notes">name, description</td><td class="col-notes">项目</td></tr>
+<tr><td class="col-name">rooms</td><td class="col-notes">project_id, room_type, length_m, width_m, height_m, light_model, light_count, light_circuits</td><td class="col-notes">暗室房间</td></tr>
+<tr><td class="col-name">circuits</td><td class="col-notes">room_id, filter_id, name, purpose, voltage_type, load_current_a</td><td class="col-notes">配电线路</td></tr>
+<tr><td class="col-name">cable_segments</td><td class="col-notes">circuit_id, segment_type, cable_spec_id, length_m, from_x/y, to_x/y, parallel_count</td><td class="col-notes">电缆段（含坐标）</td></tr>
+<tr><td class="col-name">devices</td><td class="col-notes">segment_id, device_type, model, rating_a, quantity, pos_x, pos_y</td><td class="col-notes">终端设备（含坐标）</td></tr>
+<tr><td class="col-name">users</td><td class="col-notes">username, password, display_name, role</td><td class="col-notes">admin/editor</td></tr>
+</tbody>
+</table>
+</div>
+
+<p style="text-align:center;color:var(--muted);font-size:12px;margin-top:32px;">PDC Calculator · 数据导入格式参考 · 生成于 2026-05-11</p>
+
+</div>
+</body>
+</html>

@@ -1,6 +1,7 @@
 import { Router, Request, Response } from 'express';
 import { getDb } from '../db/schema.js';
 import { recommendCable } from '../engine/selector.js';
+import { validate } from '../validate.js';
 
 export const circuitsRouter = Router();
 
@@ -35,6 +36,13 @@ circuitsRouter.get('/by-room/:roomId', (req: Request, res: Response) => {
 
 // Create circuit
 circuitsRouter.post('/', (req: Request, res: Response) => {
+  const v = validate(req.body, {
+    room_id: { required: true, type: 'number' },
+    name: { required: true, type: 'string', minLength: 1 },
+    voltage_type: { required: true, type: 'string' },
+    load_current_a: { required: true, type: 'number', min: 0 },
+  });
+  if (!v.valid) { res.status(400).json({ error: v.errors.join('; ') }); return; }
   const db = getDb();
   const { room_id, filter_id, name, purpose, voltage_type, load_current_a, notes } = req.body;
   const r = db.prepare(
@@ -78,6 +86,13 @@ circuitsRouter.get('/:id/segments', (req: Request, res: Response) => {
 
 // Create segment
 circuitsRouter.post('/segments', (req: Request, res: Response) => {
+  const v = validate(req.body, {
+    circuit_id: { required: true, type: 'number' },
+    segment_type: { required: true, type: 'string' },
+    cable_spec_id: { required: true, type: 'number' },
+    length_m: { required: true, type: 'number', min: 0 },
+  });
+  if (!v.valid) { res.status(400).json({ error: v.errors.join('; ') }); return; }
   const db = getDb();
   const { circuit_id, parent_segment_id, segment_type, cable_spec_id, length_m, parallel_count, from_location, to_location } = req.body;
   const r = db.prepare(
@@ -96,15 +111,24 @@ circuitsRouter.put('/segments/:id', (req: Request, res: Response) => {
   res.json({ ok: true });
 });
 
-// Delete segment
+// Delete segment — nullify child references first to avoid FK violations
 circuitsRouter.delete('/segments/:id', (req: Request, res: Response) => {
   const db = getDb();
-  db.prepare('DELETE FROM cable_segments WHERE id = ?').run(req.params.id);
+  const id = parseInt(req.params.id);
+  // Unlink children before deleting parent (SQLite can't alter FK ON DELETE after creation)
+  db.prepare('UPDATE cable_segments SET parent_segment_id = NULL WHERE parent_segment_id = ?').run(id);
+  db.prepare('DELETE FROM cable_segments WHERE id = ?').run(id);
   res.json({ ok: true });
 });
 
 // Create device on segment
 circuitsRouter.post('/devices', (req: Request, res: Response) => {
+  const v = validate(req.body, {
+    segment_id: { required: true, type: 'number' },
+    device_type: { required: true, type: 'string' },
+    quantity: { required: true, type: 'number', min: 1 },
+  });
+  if (!v.valid) { res.status(400).json({ error: v.errors.join('; ') }); return; }
   const db = getDb();
   const { segment_id, device_type, model, rating_v, rating_a, quantity, unit_price } = req.body;
   const r = db.prepare(
