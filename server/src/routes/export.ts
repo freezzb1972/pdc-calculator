@@ -2,6 +2,8 @@ import { Router, Request, Response } from 'express';
 import { getDb } from '../db/schema.js';
 import ExcelJS from 'exceljs';
 import { runSafetyCheck } from '../engine/gb/safety-check.js';
+import { calculateBom } from '../engine/calculator.js';
+import { LOAD_SAFETY_FACTOR } from '../config.js';
 
 export const exportRouter = Router();
 
@@ -9,76 +11,8 @@ exportRouter.get('/project/:id/bom', (req: Request, res: Response) => {
   const db = getDb();
   const project = db.prepare('SELECT * FROM projects WHERE id = ?').get(req.params.id) as any;
   if (!project) { res.status(404).json({ error: 'Project not found' }); return; }
-
-  const rooms = db.prepare('SELECT * FROM rooms WHERE project_id = ?').all(req.params.id) as any[];
-  const items: any[] = [];
-  let grandTotal = 0;
-  let filtersCount = 0;
-  let cableTotalM = 0;
-  let deviceCount = 0;
-
-  for (const room of rooms) {
-    const circuits = db.prepare(`
-      SELECT c.*, f.model_name as filter_model, f.unit_price as filter_price, f.current_rating_a, f.phases
-      FROM circuits c LEFT JOIN filters f ON c.filter_id = f.id
-      WHERE c.room_id = ? ORDER BY c.id
-    `).all(room.id) as any[];
-
-    for (const circuit of circuits) {
-      if (circuit.filter_model) {
-        items.push({
-          category: '滤波器', description: `${circuit.filter_model} ${circuit.voltage_type}`,
-          spec: `${circuit.current_rating_a}A`,
-          quantity: 1, unit: '台', unit_price: circuit.filter_price || 0,
-          subtotal: circuit.filter_price || 0,
-        });
-        grandTotal += circuit.filter_price || 0;
-        filtersCount++;
-      }
-
-      const segments = db.prepare(`
-        SELECT s.*, cs.model_name as cable_model, cs.cross_section_mm2, cs.unit_price as cable_price
-        FROM cable_segments s LEFT JOIN cable_specs cs ON s.cable_spec_id = cs.id
-        WHERE s.circuit_id = ? ORDER BY s.id
-      `).all(circuit.id) as any[];
-
-      for (const seg of segments) {
-        const totalLength = seg.length_m * seg.parallel_count;
-        const subtotal = totalLength * (seg.cable_price || 0);
-        if (seg.cable_model) {
-          const typeLabel: Record<string, string> = { dragchain: '拖链', branch: '分支', parallel: '并联' };
-          items.push({
-            category: '电缆',
-            description: `${typeLabel[seg.segment_type] || '主干'} ${seg.cable_model}`,
-            spec: `${seg.cross_section_mm2}mm² × ${seg.parallel_count}根`,
-            quantity: totalLength, unit: 'm', unit_price: seg.cable_price || 0,
-            subtotal,
-          });
-          grandTotal += subtotal;
-          cableTotalM += totalLength;
-        }
-
-        const devices = db.prepare('SELECT * FROM devices WHERE segment_id = ?').all(seg.id) as any[];
-        for (const dev of devices) {
-          const subtotal = dev.quantity * (dev.unit_price || 0);
-          items.push({
-            category: '附件', description: dev.device_type,
-            spec: dev.model || `${dev.rating_v}V/${dev.rating_a}A`,
-            quantity: dev.quantity, unit: '个', unit_price: dev.unit_price || 0,
-            subtotal,
-          });
-          grandTotal += subtotal;
-          deviceCount += dev.quantity;
-        }
-      }
-    }
-  }
-
-  res.json({
-    items,
-    grand_total: grandTotal,
-    summary: { filters_count: filtersCount, cable_total_m: cableTotalM, device_count: deviceCount },
-  });
+  const bom = calculateBom(Number(req.params.id));
+  res.json(bom);
 });
 
 exportRouter.get('/project/:id/check', (req: Request, res: Response) => {
@@ -210,14 +144,14 @@ exportRouter.get('/project/:id/excel', async (req: Request, res: Response) => {
       const segments = db.prepare(`SELECT s.*, cs.max_current_a, cs.cross_section_mm2 FROM cable_segments s LEFT JOIN cable_specs cs ON s.cable_spec_id = cs.id WHERE s.circuit_id = ?`).all(circuit.id) as any[];
       for (const seg of segments) {
         if (seg.max_current_a && circuit.current_rating_a) {
-          const pass = seg.max_current_a >= circuit.current_rating_a * 1.25;
+          const pass = seg.max_current_a >= circuit.current_rating_a * LOAD_SAFETY_FACTOR;
           ws3.addRow({
             check: '载流量校验', standard: 'GB/T 16895',
             circuit: `${room.room_type}/${circuit.name}`,
             result: pass ? '✓ 通过' : '✗ 不通过',
             note: pass
-              ? `电缆载流量${seg.max_current_a}A ≥ 回路电流${circuit.current_rating_a}A×1.25`
-              : `电缆载流量${seg.max_current_a}A < 回路电流${circuit.current_rating_a}A×1.25，建议增大截面`,
+              ? `电缆载流量${seg.max_current_a}A ≥ 回路电流${circuit.current_rating_a}A×${LOAD_SAFETY_FACTOR}`
+              : `电缆载流量${seg.max_current_a}A < 回路电流${circuit.current_rating_a}A×${LOAD_SAFETY_FACTOR}，建议增大截面`,
           });
         }
         if (seg.cross_section_mm2) {

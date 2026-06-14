@@ -167,6 +167,7 @@ function SegmentForm({ visible, onClose, onSave, initial, circuitId, parentSegme
   circuitLoadA?: number;
 }) {
   const { t } = useAppTranslation('projectEditor');
+  const LOAD_SAFETY_FACTOR = 1.25; // keep in sync with server/src/config.ts
   const [cables, setCables] = useState<any[]>([]);
   const [highlightCable, setHighlightCable] = useState<number | null>(null);
   const [form] = Form.useForm();
@@ -183,7 +184,7 @@ function SegmentForm({ visible, onClose, onSave, initial, circuitId, parentSegme
   // Auto-recommend: highlight cable that meets load requirement
   useEffect(() => {
     if (!circuitLoadA || cables.length === 0) return;
-    const required = circuitLoadA * 1.25;
+    const required = circuitLoadA * LOAD_SAFETY_FACTOR;
     const match = cables.find(c => c.max_current_a >= required);
     if (match) setHighlightCable(match.id);
   }, [circuitLoadA, cables, visible]);
@@ -227,7 +228,7 @@ function SegmentForm({ visible, onClose, onSave, initial, circuitId, parentSegme
         </Form.Item>
         {highlightCable && circuitLoadA && (
           <div style={{ padding: '8px 12px', background: '#fffbe6', border: '1px solid #ffe58f', borderRadius: 6, marginBottom: 12 }}>
-            {t('segment.recommendation', { loadA: circuitLoadA, requiredA: (circuitLoadA * 1.25).toFixed(1) })}
+            {t('segment.recommendation', { loadA: circuitLoadA, requiredA: (circuitLoadA * LOAD_SAFETY_FACTOR).toFixed(1) })}
           </div>
         )}
         <Space style={{ width: '100%' }} size={16}>

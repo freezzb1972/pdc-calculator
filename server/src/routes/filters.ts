@@ -1,9 +1,10 @@
 import { Router, Request, Response } from 'express';
 import { getDb } from '../db/schema.js';
 import multer from 'multer';
+import { UPLOAD_MAX_SIZE_BYTES } from '../config.js';
 
 export const filtersRouter = Router();
-const upload = multer({ storage: multer.memoryStorage() });
+const upload = multer({ storage: multer.memoryStorage(), limits: { fileSize: UPLOAD_MAX_SIZE_BYTES } });
 
 filtersRouter.get('/', (req: Request, res: Response) => {
   const db = getDb();

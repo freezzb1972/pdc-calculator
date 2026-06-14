@@ -180,6 +180,21 @@ function initSchema(db: Database.Database) {
     db.exec("ALTER TABLE cable_segments ADD COLUMN to_y REAL");
   }
 
+  // Indexes for foreign key columns (IF NOT EXISTS in SQLite 3.27+)
+  const indexes = [
+    'CREATE INDEX IF NOT EXISTS idx_rooms_project ON rooms(project_id)',
+    'CREATE INDEX IF NOT EXISTS idx_circuits_room ON circuits(room_id)',
+    'CREATE INDEX IF NOT EXISTS idx_circuits_filter ON circuits(filter_id)',
+    'CREATE INDEX IF NOT EXISTS idx_segments_circuit ON cable_segments(circuit_id)',
+    'CREATE INDEX IF NOT EXISTS idx_segments_parent ON cable_segments(parent_segment_id)',
+    'CREATE INDEX IF NOT EXISTS idx_segments_cable ON cable_segments(cable_spec_id)',
+    'CREATE INDEX IF NOT EXISTS idx_devices_segment ON devices(segment_id)',
+    'CREATE INDEX IF NOT EXISTS idx_price_history_item ON price_history(item_type, item_id)',
+  ];
+  for (const sql of indexes) {
+    db.exec(sql);
+  }
+
   // Seed default admin user
   const userCount = db.prepare('SELECT COUNT(*) as cnt FROM users').get() as any;
   if (userCount.cnt === 0) {

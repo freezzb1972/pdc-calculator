@@ -74,6 +74,7 @@ function manhattanPath(fx: number, fy: number, tx: number, ty: number, offset: n
   return `M ${fx} ${fy} L ${fx} ${my} L ${tx} ${ty}`;
 }
 
+// NOTE: Keep in sync with server/src/engine/calculator.ts:estimateCableLength()
 function estimateLength(
   roomLength: number, roomWidth: number, roomHeight: number,
   fromX: number, fromY: number, toX: number, toY: number,
@@ -95,6 +96,7 @@ export default function RoomLayout({
   const [scale, setScale] = useState(40);
   const [selectedDevice, setSelectedDevice] = useState<DeviceNode | null>(null);
   const [draftPos, setDraftPos] = useState<{ x: number; y: number } | null>(null);
+  const autoLayoutDone = useRef(false);
 
   const pad = 1.5;
   const viewW = room.length_m + pad * 2;
@@ -117,27 +119,43 @@ export default function RoomLayout({
     return () => window.removeEventListener('resize', updateScale);
   }, [updateScale]);
 
-  // Auto-assign positions for devices at (0,0)
+  // Auto-assign positions for uninitialized devices (pos 0,0) — runs once per open
   useEffect(() => {
-    if (!visible) return;
-    let changed = false;
+    if (!visible) {
+      autoLayoutDone.current = false;
+      return;
+    }
+    if (autoLayoutDone.current) return;
+    let hasUnplaced = false;
     for (const route of routes) {
       for (const dev of route.devices) {
         if (dev.pos_x === 0 && dev.pos_y === 0) {
-          // Spread across room
+          hasUnplaced = true;
+          break;
+        }
+      }
+      if (hasUnplaced) break;
+    }
+    if (!hasUnplaced) return;
+
+    // Collect all unplaced devices and assign positions in one pass
+    const updates: Promise<void>[] = [];
+    for (const route of routes) {
+      for (const dev of route.devices) {
+        if (dev.pos_x === 0 && dev.pos_y === 0) {
           const idx = routes.indexOf(route) * 100 + route.devices.indexOf(dev);
           const nx = 1.5 + (idx % Math.max(1, Math.floor(room.length_m - 1)));
           const ny = 1.5 + (Math.floor(idx / Math.max(1, Math.floor(room.length_m - 1)))) * 1.2;
           if (ny < room.width_m - 0.5) {
             dev.pos_x = Math.round(nx * 2) / 2;
             dev.pos_y = Math.round(ny * 2) / 2;
-            changed = true;
-            onDeviceMove(dev.id, dev.pos_x, dev.pos_y);
+            updates.push(onDeviceMove(dev.id, dev.pos_x, dev.pos_y));
           }
         }
       }
     }
-  }, [visible]);
+    autoLayoutDone.current = true;
+  }, [visible, routes, room]);
 
   const svgX = (x: number) => pad + x;
   const svgY = (y: number) => pad + (room.width_m - y); // flip Y so origin is bottom-left

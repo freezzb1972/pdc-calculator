@@ -1,15 +1,25 @@
 import { Router, Request, Response } from 'express';
 import jwt from 'jsonwebtoken';
 import bcrypt from 'bcryptjs';
+import rateLimit from 'express-rate-limit';
 import { getDb } from '../db/schema.js';
-
-const JWT_SECRET = process.env.JWT_SECRET || 'pdc-calculator-secret-key-change-in-production';
-const JWT_EXPIRES = '7d';
+import { JWT_SECRET, JWT_EXPIRES, PASSWORD_MIN_LENGTH, PASSWORD_PATTERN, LOGIN_RATE_WINDOW_MS, LOGIN_RATE_MAX } from '../config.js';
 
 export const authRouter = Router();
 
-// GET /auth/users — list all users
+// Login rate limiter
+const loginLimiter = rateLimit({
+  windowMs: LOGIN_RATE_WINDOW_MS,
+  max: LOGIN_RATE_MAX,
+  message: { error: '登录尝试过于频繁，请稍后再试' },
+  standardHeaders: true,
+  legacyHeaders: false,
+});
+
+// GET /auth/users — list all users (admin only)
 authRouter.get('/users', requireAuth, (req: Request, res: Response) => {
+  const user = (req as any).user;
+  if (user?.role !== 'admin') { res.status(403).json({ error: '仅管理员可查看用户列表' }); return; }
   const db = getDb();
   const users = db.prepare('SELECT id, username, display_name, role, created_at FROM users ORDER BY id').all();
   res.json(users);
@@ -47,16 +57,47 @@ authRouter.put('/me/password', requireAuth, (req: Request, res: Response) => {
 
 // PUT /auth/users/:id/password — change any user's password (admin only)
 authRouter.put('/users/:id/password', requireAuth, (req: Request, res: Response) => {
+  const currentUser = (req as any).user;
+  const targetId = parseInt(req.params.id);
+  const { password, old_password } = req.body;
+
+  // Only admin can change others' passwords; regular users can only change their own
+  if (currentUser?.role !== 'admin' && currentUser?.id !== targetId) {
+    res.status(403).json({ error: '只能修改自己的密码' });
+    return;
+  }
+
+  // Non-admin must provide old password for verification
+  if (currentUser?.role !== 'admin') {
+    if (!old_password) {
+      res.status(400).json({ error: '请提供旧密码' });
+      return;
+    }
+    const db = getDb();
+    const targetUser = db.prepare('SELECT password_hash FROM users WHERE id = ?').get(targetId) as any;
+    if (!targetUser || !bcrypt.compareSync(old_password, targetUser.password_hash)) {
+      res.status(403).json({ error: '旧密码错误' });
+      return;
+    }
+  }
+
+  if (!password || password.length < PASSWORD_MIN_LENGTH) {
+    res.status(400).json({ error: `密码至少${PASSWORD_MIN_LENGTH}位，需包含字母和数字` });
+    return;
+  }
+  if (!PASSWORD_PATTERN.test(password)) {
+    res.status(400).json({ error: '密码需同时包含字母和数字' });
+    return;
+  }
+
   const db = getDb();
-  const { password } = req.body;
-  if (!password || password.length < 6) { res.status(400).json({ error: '密码至少6位' }); return; }
   const hash = bcrypt.hashSync(password, 10);
-  db.prepare('UPDATE users SET password_hash = ? WHERE id = ?').run(hash, req.params.id);
+  db.prepare('UPDATE users SET password_hash = ? WHERE id = ?').run(hash, targetId);
   res.json({ ok: true });
 });
 
-// POST /auth/login
-authRouter.post('/login', (req: Request, res: Response) => {
+// POST /auth/login (rate-limited)
+authRouter.post('/login', loginLimiter, (req: Request, res: Response) => {
   const { username, password } = req.body;
   if (!username || !password) {
     res.status(400).json({ error: '用户名和密码不能为空' });
@@ -125,15 +166,19 @@ export function requireAuth(req: Request, res: Response, next: () => void) {
 
 // POST /auth/register (admin only for team use)
 authRouter.post('/register', requireAuth, (req: Request, res: Response) => {
-  const user = (req as any).user;
-  if (user?.role !== 'admin') { res.status(403).json({ error: '仅管理员可创建用户' }); return; }
+  const currentUser = (req as any).user;
+  if (currentUser?.role !== 'admin') { res.status(403).json({ error: '仅管理员可创建用户' }); return; }
   const { username, password, display_name, role } = req.body;
   if (!username || !password) {
     res.status(400).json({ error: '用户名和密码不能为空' });
     return;
   }
-  if (password.length < 6) {
-    res.status(400).json({ error: '密码至少6位' });
+  if (password.length < PASSWORD_MIN_LENGTH) {
+    res.status(400).json({ error: `密码至少${PASSWORD_MIN_LENGTH}位，需包含字母和数字` });
+    return;
+  }
+  if (!PASSWORD_PATTERN.test(password)) {
+    res.status(400).json({ error: '密码需同时包含字母和数字' });
     return;
   }
 
