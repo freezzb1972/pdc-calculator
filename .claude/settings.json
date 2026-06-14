@@ -1,0 +1,63 @@
+{
+  "env": {
+    "CLAUDE_PLUGIN_ROOT": "/home/ubuntu/everything-claude-code"
+  },
+  "hooks": {
+    "PreToolUse": [
+      {
+        "matcher": "Bash\\(.*(shutdown|poweroff|halt|reboot|init\\s+[06]).*\\)",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "echo 'BLOCKED: Cloud instance shutdown prohibited. Use systemctl restart <service>.' >&2 && exit 1"
+          }
+        ]
+      }
+    ],
+    "PostToolUse": [
+      {
+        "matcher": "Edit || Write",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node \"${CLAUDE_PLUGIN_ROOT}/scripts/hooks/suggest-compact.js\""
+          }
+        ],
+        "description": "Suggest manual compaction (everything-claude-code)"
+      }
+    ],
+    "PreCompact": [
+      {
+        "matcher": "*",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node \"${CLAUDE_PLUGIN_ROOT}/scripts/hooks/pre-compact.js\""
+          }
+        ]
+      }
+    ],
+    "SessionStart": [
+      {
+        "matcher": "*",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node \"${CLAUDE_PLUGIN_ROOT}/scripts/hooks/session-start.js\""
+          }
+        ]
+      }
+    ],
+    "SessionEnd": [
+      {
+        "matcher": "*",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node \"${CLAUDE_PLUGIN_ROOT}/scripts/hooks/session-end.js\""
+          }
+        ]
+      }
+    ]
+  }
+}

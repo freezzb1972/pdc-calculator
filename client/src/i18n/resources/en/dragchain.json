@@ -1,0 +1,37 @@
+{
+  "title": "Turntable Drag Chain Calculator",
+  "labels": {
+    "turntableRadius": "Turntable Radius (m)",
+    "maxAngle": "Max Rotation Angle (°)",
+    "bendRadius": "Cable Bend Radius (mm)",
+    "cableDiameter": "Cable Outer Diameter (mm)",
+    "cableCount": "Cable Count",
+    "chainHeight": "Chain Height (mm)",
+    "chainWidth": "Chain Width (mm)"
+  },
+  "btnCalculate": "Calculate",
+  "result": {
+    "title": "Results",
+    "chainLength": "Chain Length",
+    "bendRadius": "Bend Radius",
+    "cablesPerLayer": "Cables per Layer",
+    "layers": "Layers",
+    "recommendedModel": "Recommended Model",
+    "totalCableLength": "Total Cable Length"
+  },
+  "alert": {
+    "title": "Formula Pending Verification",
+    "desc": "Current calculation is an estimate. Drag chain length and model selection should be confirmed with an engineer. Factors: turntable radius, rotation angle, cable bend radius."
+  },
+  "formula": {
+    "title": "Formula:",
+    "chainLength": "Chain length ≈ π × R × θ/180 + straight margin (1.5m)",
+    "bendRadius": "Bend radius ≥ cable min bend radius × 1.5",
+    "warning": "⚠ Above formulas are estimates, engineer confirmation required"
+  },
+  "models": {
+    "heavy": "Heavy-Duty",
+    "standard": "Standard",
+    "series": " Series"
+  }
+}

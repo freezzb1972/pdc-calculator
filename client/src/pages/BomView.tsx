@@ -4,6 +4,7 @@ import { Card, Table, Statistic, Row, Col, Spin, Typography, Button, Space, Tag,
 import { ArrowLeftOutlined, DownloadOutlined, SafetyOutlined } from '@ant-design/icons';
 import { api } from '../api/client';
 import type { BomResult } from '../types';
+import { useAppTranslation } from '../i18n/useAppTranslation';
 
 const { Title, Text } = Typography;
 
@@ -18,6 +19,7 @@ export default function BomView() {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
   const projectId = Number(id);
+  const { t } = useAppTranslation('bom');
   const [bom, setBom] = useState<BomResult | null>(null);
   const [loading, setLoading] = useState(true);
   const [project, setProject] = useState<any>(null);
@@ -40,24 +42,24 @@ export default function BomView() {
   }, [projectId]);
 
   if (loading) return <Spin style={{ display: 'block', margin: '80px auto' }} />;
-  if (!bom) return <Card title="错误">无法加载BOM数据</Card>;
+  if (!bom) return <Card>{t('errorLoad')}</Card>;
 
   const columns = [
     {
-      title: '类别', dataIndex: 'category', key: 'category', width: 80,
+      title: t('columns.category'), dataIndex: 'category', key: 'category', width: 80,
       render: (v: string) => <Tag color={categoryColors[v] || 'default'}>{v}</Tag>,
     },
-    { title: '名称', dataIndex: 'description', key: 'description', width: 200 },
-    { title: '规格', dataIndex: 'spec', key: 'spec', width: 160 },
-    { title: '数量', dataIndex: 'quantity', key: 'quantity', width: 60 },
-    { title: '单位', dataIndex: 'unit', key: 'unit', width: 50 },
+    { title: t('columns.name'), dataIndex: 'description', key: 'description', width: 200 },
+    { title: t('columns.spec'), dataIndex: 'spec', key: 'spec', width: 160 },
+    { title: t('columns.quantity'), dataIndex: 'quantity', key: 'quantity', width: 60 },
+    { title: t('columns.unit'), dataIndex: 'unit', key: 'unit', width: 50 },
     {
-      title: '单价(¥)', dataIndex: 'unit_price', key: 'unit_price', width: 90,
+      title: t('columns.unitPrice'), dataIndex: 'unit_price', key: 'unit_price', width: 90,
       render: (v: number) => v?.toFixed(2),
       align: 'right' as const,
     },
     {
-      title: '小计(¥)', dataIndex: 'subtotal', key: 'subtotal', width: 100,
+      title: t('columns.subtotal'), dataIndex: 'subtotal', key: 'subtotal', width: 100,
       render: (v: number) => v?.toFixed(2),
       align: 'right' as const,
       sorter: (a: any, b: any) => a.subtotal - b.subtotal,
@@ -69,10 +71,10 @@ export default function BomView() {
   return (
     <div>
       <Card
-        title={<><Button icon={<ArrowLeftOutlined />} type="text" onClick={() => navigate(`/projects/${projectId}`)} /> 物料清单 (BOM)</>}
+        title={<><Button icon={<ArrowLeftOutlined />} type="text" onClick={() => navigate(`/projects/${projectId}`)} /> {t('title')}</>}
         extra={
           <Space>
-            <Button icon={<DownloadOutlined />} type="primary" onClick={handleExportExcel}>导出Excel</Button>
+            <Button icon={<DownloadOutlined />} type="primary" onClick={handleExportExcel}>{t('btnExport')}</Button>
           </Space>
         }
       >
@@ -80,23 +82,23 @@ export default function BomView() {
         <Row gutter={16} style={{ marginBottom: 24 }}>
           <Col span={6}>
             <Card size="small">
-              <Statistic title="滤波器数" value={bom.summary?.filters_count || 0} suffix="个" />
+              <Statistic title={t('stats.filterCount')} value={bom.summary?.filters_count || 0} suffix="个" />
             </Card>
           </Col>
           <Col span={6}>
             <Card size="small">
-              <Statistic title="电缆总长" value={bom.summary?.cable_total_m?.toFixed(1) || 0} suffix="m" />
+              <Statistic title={t('stats.cableLength')} value={bom.summary?.cable_total_m?.toFixed(1) || 0} suffix="m" />
             </Card>
           </Col>
           <Col span={6}>
             <Card size="small">
-              <Statistic title="设备数" value={bom.summary?.device_count || 0} suffix="个" />
+              <Statistic title={t('stats.deviceCount')} value={bom.summary?.device_count || 0} suffix="个" />
             </Card>
           </Col>
           <Col span={6}>
             <Card size="small" style={{ background: '#f6ffed' }}>
               <Statistic
-                title="总价"
+                title={t('stats.totalPrice')}
                 value={bom.grand_total?.toFixed(2) || 0}
                 suffix="¥"
                 valueStyle={{ color: '#52c41a', fontWeight: 600 }}
@@ -116,7 +118,7 @@ export default function BomView() {
             <Table.Summary fixed>
               <Table.Summary.Row>
                 <Table.Summary.Cell index={0} colSpan={6} align="right">
-                  <Text strong>合计</Text>
+                  <Text strong>{t('total')}</Text>
                 </Table.Summary.Cell>
                 <Table.Summary.Cell index={1} align="right">
                   <Text strong style={{ fontSize: 16, color: '#52c41a' }}>

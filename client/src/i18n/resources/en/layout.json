@@ -1,0 +1,33 @@
+{
+  "appTitle": "PDC Calculator",
+  "appTitleShort": "PDC",
+  "menu": {
+    "projects": "Projects",
+    "filters": "Filter Library",
+    "cables": "Cable Specs",
+    "gbTables": "GB Standards",
+    "prices": "Price Management",
+    "selectionRules": "Selection Rules",
+    "users": "User Management"
+  },
+  "userMenu": {
+    "changePassword": "Change Password",
+    "logout": "Logout",
+    "oldPassword": "Old Password",
+    "newPassword": "New Password",
+    "confirmPassword": "Confirm Password",
+    "oldPasswordRequired": "Please enter old password",
+    "newPasswordRequired": "Please enter new password",
+    "confirmPasswordRequired": "Please confirm new password",
+    "passwordMinLength": "Password must be at least 6 characters",
+    "passwordMismatch": "Passwords do not match",
+    "passwordChanged": "Password changed",
+    "passwordChangeFailed": "Change failed"
+  },
+  "lang": {
+    "switch": "Language",
+    "zh": "中文",
+    "en": "English",
+    "zhEn": "中英文"
+  }
+}

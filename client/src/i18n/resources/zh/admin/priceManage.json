@@ -1,0 +1,20 @@
+{
+  "title": "价格变更历史",
+  "filterPlaceholder": "筛选类型",
+  "filterOptions": {
+    "filter": "滤波器",
+    "cable": "电缆"
+  },
+  "columns": {
+    "type": "类型",
+    "item": "项目",
+    "oldPrice": "旧价格",
+    "newPrice": "新价格",
+    "source": "来源",
+    "time": "时间"
+  },
+  "tags": {
+    "filter": "滤波器",
+    "cable": "电缆"
+  }
+}

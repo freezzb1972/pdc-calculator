@@ -3,6 +3,7 @@ import { Modal, Table, Tag, Descriptions, Result, Spin, Statistic, Row, Col, Car
 import { CheckCircleOutlined, CloseCircleOutlined, WarningOutlined } from '@ant-design/icons';
 import { api } from '../api/client';
 import type { GBCheckResult } from '../types';
+import { useAppTranslation } from '../i18n/useAppTranslation';
 
 interface CheckResponse {
   project_name: string;
@@ -10,11 +11,30 @@ interface CheckResponse {
   summary: { pass: number; warn: number; fail: number };
 }
 
+function statusIcon(status: string) {
+  switch (status) {
+    case 'pass': return <CheckCircleOutlined />;
+    case 'warn': return <WarningOutlined />;
+    case 'fail': return <CloseCircleOutlined />;
+    default: return null;
+  }
+}
+
+function statusColor(status: string) {
+  switch (status) {
+    case 'pass': return 'green';
+    case 'warn': return 'orange';
+    case 'fail': return 'red';
+    default: return 'default';
+  }
+}
+
 export default function ComplianceReport({ open, onClose, projectId }: {
   open: boolean;
   onClose: () => void;
   projectId: number;
 }) {
+  const { t } = useAppTranslation('compliance');
   const [data, setData] = useState<CheckResponse | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -29,41 +49,23 @@ export default function ComplianceReport({ open, onClose, projectId }: {
       .finally(() => setLoading(false));
   }, [open, projectId]);
 
-  const statusIcon = (status: string) => {
-    switch (status) {
-      case 'pass': return <CheckCircleOutlined />;
-      case 'warn': return <WarningOutlined />;
-      case 'fail': return <CloseCircleOutlined />;
-      default: return null;
-    }
-  };
-
-  const statusColor = (status: string) => {
-    switch (status) {
-      case 'pass': return 'green';
-      case 'warn': return 'orange';
-      case 'fail': return 'red';
-      default: return 'default';
-    }
-  };
-
   const columns = [
     {
-      title: '校验项', dataIndex: 'check_name', key: 'check_name', width: 120,
+      title: t('columns.item'), dataIndex: 'check_name', key: 'check_name', width: 120,
     },
     {
-      title: '标准', dataIndex: 'standard', key: 'standard', width: 100,
+      title: t('columns.standard'), dataIndex: 'standard', key: 'standard', width: 100,
     },
     {
-      title: '状态', dataIndex: 'status', key: 'status', width: 70,
+      title: t('columns.status'), dataIndex: 'status', key: 'status', width: 70,
       render: (v: string) => (
         <Tag color={statusColor(v)} icon={statusIcon(v)}>
-          {v === 'pass' ? '通过' : v === 'warn' ? '警告' : '不通过'}
+          {v === 'pass' ? t('stats.pass') : v === 'warn' ? t('stats.warning') : t('stats.fail')}
         </Tag>
       ),
     },
-    { title: '描述', dataIndex: 'message', key: 'message' },
-    { title: '回路/线段', dataIndex: 'detail', key: 'detail', ellipsis: true, width: 180 },
+    { title: t('columns.description'), dataIndex: 'message', key: 'message' },
+    { title: t('columns.source'), dataIndex: 'detail', key: 'detail', ellipsis: true, width: 180 },
   ];
 
   const summary = data?.summary;
@@ -71,15 +73,15 @@ export default function ComplianceReport({ open, onClose, projectId }: {
 
   return (
     <Modal
-      title="GB标准合规校验"
+      title={t('title')}
       open={open}
       onCancel={onClose}
       footer={null}
       width={960}
     >
       <Descriptions size="small" column={1} style={{ marginBottom: 16 }}>
-        <Descriptions.Item label="项目">{data?.project_name || '-'}</Descriptions.Item>
-        <Descriptions.Item label="参考标准">
+        <Descriptions.Item label={t('project')}>{data?.project_name || '-'}</Descriptions.Item>
+        <Descriptions.Item label={t('reference')}>
           GB 50054-2011, GB/T 16895.15-2022, GB 50052-2009, GB 50217-2018
         </Descriptions.Item>
       </Descriptions>
@@ -87,30 +89,30 @@ export default function ComplianceReport({ open, onClose, projectId }: {
       {loading ? (
         <Spin style={{ display: 'block', margin: '60px auto' }} />
       ) : error ? (
-        <Result status="error" title="加载失败" subTitle={error} />
+        <Result status="error" title={error} />
       ) : !data ? (
-        <Result title="无数据" subTitle="请先配置项目回路和线缆段" />
+        <Result title={t('noData')} subTitle={t('noDataHint')} />
       ) : (
         <>
           <Row gutter={16} style={{ marginBottom: 16 }}>
             <Col span={6}>
-              <Card size="small"><Statistic title="通过" value={summary?.pass || 0} valueStyle={{ color: '#52c41a' }} suffix="项" /></Card>
+              <Card size="small"><Statistic title={t('stats.pass')} value={summary?.pass || 0} valueStyle={{ color: '#52c41a' }} suffix="项" /></Card>
             </Col>
             <Col span={6}>
-              <Card size="small"><Statistic title="警告" value={summary?.warn || 0} valueStyle={{ color: '#faad14' }} suffix="项" /></Card>
+              <Card size="small"><Statistic title={t('stats.warning')} value={summary?.warn || 0} valueStyle={{ color: '#faad14' }} suffix="项" /></Card>
             </Col>
             <Col span={6}>
-              <Card size="small"><Statistic title="不通过" value={summary?.fail || 0} valueStyle={{ color: '#ff4d4f' }} suffix="项" /></Card>
+              <Card size="small"><Statistic title={t('stats.fail')} value={summary?.fail || 0} valueStyle={{ color: '#ff4d4f' }} suffix="项" /></Card>
             </Col>
             <Col span={6}>
               <Card size="small" style={{ background: allPass ? '#f6ffed' : '#fff2f0' }}>
-                <Statistic title="结论" value={allPass ? '全部通过' : '需整改'} valueStyle={{ color: allPass ? '#52c41a' : '#ff4d4f' }} />
+                <Statistic title={t('stats.conclusion')} value={allPass ? t('stats.allPass') : t('stats.needFix')} valueStyle={{ color: allPass ? '#52c41a' : '#ff4d4f' }} />
               </Card>
             </Col>
           </Row>
 
           {data.results.length === 0 ? (
-            <Result icon={<CheckCircleOutlined style={{ color: '#52c41a' }} />} title="所有校验通过" />
+            <Result icon={<CheckCircleOutlined style={{ color: '#52c41a' }} />} title={t('allPassed')} />
           ) : (
             <Table
               rowKey={(r, i) => `${r.check_name}-${i}`}

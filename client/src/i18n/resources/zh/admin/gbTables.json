@@ -1,0 +1,48 @@
+{
+  "title": "GB标准数据管理",
+  "reference": "参考标准: GB/T 16895, GB 50054, GB 50052, GB 50217",
+  "btnRefresh": "刷新",
+  "tabs": {
+    "ampacity": "载流量表 (GB/T 16895)",
+    "derating": "校正系数 (GB/T 16895)",
+    "safetyRules": "安全规则 (GB 50054)"
+  },
+  "ampacity": {
+    "columns": {
+      "cableType": "电缆类型",
+      "layingMethod": "敷设方式",
+      "crossSection": "截面(mm²)",
+      "ampacity": "载流量(A)",
+      "baseTemp": "基准温度",
+      "version": "版本"
+    },
+    "editPrompt": "输入新值"
+  },
+  "derating": {
+    "columns": {
+      "correctionType": "校正类型",
+      "condition": "条件描述",
+      "factorValue": "系数值",
+      "version": "版本"
+    }
+  },
+  "safetyRules": {
+    "columns": {
+      "ruleNo": "规则编号",
+      "ruleName": "规则名称",
+      "description": "说明",
+      "minValue": "最小值",
+      "severity": "严重程度",
+      "version": "版本"
+    },
+    "severity": {
+      "mandatory": "强制",
+      "recommended": "建议",
+      "reference": "参考"
+    }
+  },
+  "messages": {
+    "updated": "已更新",
+    "updateFailed": "更新失败"
+  }
+}

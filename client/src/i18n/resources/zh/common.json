@@ -1,0 +1,47 @@
+{
+  "save": "保存",
+  "cancel": "取消",
+  "delete": "删除",
+  "edit": "编辑",
+  "add": "新增",
+  "search": "搜索",
+  "export": "导出",
+  "import": "导入",
+  "refresh": "刷新",
+  "close": "关闭",
+  "confirm": "确定",
+  "back": "返回",
+  "loading": "加载中...",
+  "noData": "暂无数据",
+  "units": {
+    "meter": "m",
+    "millimeter": "mm",
+    "ampere": "A",
+    "volt": "V",
+    "yuan": "¥",
+    "piece": "个",
+    "room": "间",
+    "kind": "种",
+    "item": "项"
+  },
+  "status": {
+    "pass": "通过",
+    "warning": "警告",
+    "fail": "不通过"
+  },
+  "msg": {
+    "created": "已创建",
+    "updated": "已更新",
+    "deleted": "已删除",
+    "importSuccess": "导入成功",
+    "importFailed": "导入失败，请检查文件格式",
+    "exportSuccess": "导出成功",
+    "exportFailed": "导出失败",
+    "updateFailed": "更新失败",
+    "loadFailed": "加载失败",
+    "deleteFailed": "删除失败",
+    "createFailed": "创建失败",
+    "modifyFailed": "修改失败",
+    "networkError": "网络错误"
+  }
+}

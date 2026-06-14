@@ -1,4 +1,5 @@
 import { createContext, useContext, useState, useEffect, ReactNode, useCallback } from 'react';
+import i18n from '../i18n';
 
 export interface User {
   id: number;
@@ -57,7 +58,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     });
     if (!res.ok) {
       const data = await res.json().catch(() => ({}));
-      throw new Error(data.error || '登录失败');
+      throw new Error(data.error || i18n.t('login:loginFailed'));
     }
     const data = await res.json();
     localStorage.setItem('pdc_token', data.token);

@@ -1,0 +1,26 @@
+{
+  "title": "Projects",
+  "stats": {
+    "projectCount": "Projects",
+    "roomCount": "Rooms",
+    "filterCount": "Filters",
+    "cableCount": "Cable Specs"
+  },
+  "columns": {
+    "name": "Project Name",
+    "description": "Description",
+    "createdAt": "Created",
+    "actions": "Actions"
+  },
+  "btnEdit": "Edit",
+  "btnConfigure": "Configure",
+  "btnNew": "New Project",
+  "deleteConfirm": "Confirm delete?",
+  "modalEdit": "Edit Project",
+  "modalNew": "New Project",
+  "labelName": "Project Name",
+  "labelDescription": "Description",
+  "msgUpdated": "Updated",
+  "msgCreated": "Created",
+  "msgDeleted": "Deleted"
+}

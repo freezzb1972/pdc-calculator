@@ -1,0 +1,140 @@
+{
+  "room": {
+    "modalEdit": "Edit Room",
+    "modalNew": "Add Room",
+    "type": "Room Type",
+    "length": "Length (m)",
+    "width": "Width (m)",
+    "height": "Height (m)",
+    "lightModel": "Light Model",
+    "lightCount": "Light Count",
+    "lightCircuits": "Light Circuits",
+    "types": {
+      "darkRoom": "Anechoic Chamber",
+      "controlRoom": "Control Room",
+      "ampRoom": "Amplifier Room",
+      "conductionRoom": "Conduction Room",
+      "loadRoom": "Load Room",
+      "shieldedRoom": "Shielded Room"
+    },
+    "sectionTitle": "Rooms & Power Distribution",
+    "emptyHint": "No rooms yet. Please add a room first.",
+    "btnAdd": "Add Room",
+    "btnLayout": "Layout",
+    "btnEdit": "Edit",
+    "deleteConfirm": "Delete this room and all its circuits?",
+    "lighting": "Lighting"
+  },
+  "circuit": {
+    "modalEdit": "Edit Circuit",
+    "modalNew": "Add Circuit",
+    "name": "Circuit Name",
+    "namePlaceholder": "e.g. Main Circuit",
+    "purpose": "Purpose",
+    "purposePlaceholder": "e.g. Chamber Power",
+    "filter": "Filter",
+    "filterSearchPlaceholder": "Search filter model",
+    "voltageType": "Voltage Type",
+    "loadCurrent": "Load Current (A)",
+    "notes": "Notes",
+    "columns": {
+      "name": "Name",
+      "filter": "Filter",
+      "voltage": "Voltage",
+      "loadCurrent": "Load Current (A)",
+      "phase": "Phase",
+      "ratedCurrent": "Rated Current (A)",
+      "actions": "Actions"
+    },
+    "btnAdd": "Add Circuit",
+    "btnAddSegment": "+Segment",
+    "btnEdit": "Edit",
+    "deleteConfirm": "Delete this circuit?",
+    "deleteConfirmShort": "Delete circuit?",
+    "emptyHint": "No circuits",
+    "unnamed": "Unnamed",
+    "recommendCable": "Recommended Cable",
+    "connector": "Connector"
+  },
+  "segment": {
+    "modalEdit": "Edit Cable Segment",
+    "modalNew": "Add Cable Segment",
+    "type": "Type",
+    "parentSegment": "Parent Segment",
+    "parentPlaceholder": "None (Trunk)",
+    "cableSpec": "Cable Spec",
+    "cableSearchPlaceholder": "Search cable model",
+    "length": "Length (m)",
+    "parallelCount": "Parallel Count",
+    "from": "From",
+    "fromPlaceholder": "e.g. Filter Output",
+    "to": "To",
+    "toPlaceholder": "e.g. Turntable Junction Box",
+    "types": {
+      "trunk": "Trunk",
+      "branch": "Branch",
+      "parallel": "Parallel",
+      "dragChain": "Drag Chain"
+    },
+    "columns": {
+      "type": "Type",
+      "cable": "Cable",
+      "crossSection": "Cross Section",
+      "ampacity": "Ampacity",
+      "length": "Length (m)",
+      "parallel": "Parallel",
+      "route": "From→To",
+      "devices": "Devices",
+      "actions": "Actions"
+    },
+    "btnAdd": "+Segment",
+    "btnAddDevice": "+Device",
+    "btnEdit": "Edit",
+    "deleteConfirm": "Delete this segment?",
+    "deleteConfirmShort": "Delete segment?",
+    "emptyHint": "No cable segments",
+    "recommendation": "Recommendation: Load {{loadA}}A × 1.25 = {{requiredA}}A, use ★ cable"
+  },
+  "device": {
+    "modalEdit": "Edit Device",
+    "modalNew": "Add Device",
+    "type": "Device Type",
+    "model": "Model",
+    "ratedVoltage": "Rated Voltage (V)",
+    "ratedCurrent": "Rated Current (A)",
+    "quantity": "Quantity",
+    "unitPrice": "Unit Price (¥)",
+    "types": {
+      "lighting": "Lighting",
+      "antennaTower": "Antenna Tower",
+      "camera": "Camera",
+      "turntable": "Turntable",
+      "socket": "Socket",
+      "amplifier": "Amplifier",
+      "receiver": "Receiver",
+      "other": "Other"
+    },
+    "columns": {
+      "type": "Type",
+      "model": "Model",
+      "ratedVoltage": "Rated Voltage",
+      "ratedCurrent": "Rated Current",
+      "quantity": "Qty",
+      "unitPrice": "Unit Price (¥)",
+      "actions": "Actions"
+    },
+    "btnEdit": "Edit",
+    "deleteConfirm": "Delete this device?"
+  },
+  "toolbar": {
+    "gbCheck": "GB Check",
+    "dragChainCalc": "Drag Chain Calc",
+    "bomList": "BOM List",
+    "exportExcel": "Export Excel"
+  },
+  "info": {
+    "description": "Description",
+    "roomCount": "Room Count",
+    "createdAt": "Created"
+  }
+}

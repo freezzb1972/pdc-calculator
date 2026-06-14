@@ -26,7 +26,26 @@ authRouter.delete('/users/:id', requireAuth, (req: Request, res: Response) => {
   res.json({ ok: true });
 });
 
-// PUT /auth/users/:id/password — change password
+// PUT /auth/me/password — change own password (requires old password)
+authRouter.put('/me/password', requireAuth, (req: Request, res: Response) => {
+  const db = getDb();
+  const currentUser = (req as any).user;
+  const { old_password, new_password } = req.body;
+  if (!old_password || !new_password) { res.status(400).json({ error: '请输入旧密码和新密码' }); return; }
+  if (new_password.length < 6) { res.status(400).json({ error: '新密码至少6位' }); return; }
+
+  const user = db.prepare('SELECT password_hash FROM users WHERE id = ?').get(currentUser.id) as any;
+  if (!user || !bcrypt.compareSync(old_password, user.password_hash)) {
+    res.status(400).json({ error: '旧密码错误' });
+    return;
+  }
+
+  const hash = bcrypt.hashSync(new_password, 10);
+  db.prepare('UPDATE users SET password_hash = ? WHERE id = ?').run(hash, currentUser.id);
+  res.json({ ok: true });
+});
+
+// PUT /auth/users/:id/password — change any user's password (admin only)
 authRouter.put('/users/:id/password', requireAuth, (req: Request, res: Response) => {
   const db = getDb();
   const { password } = req.body;

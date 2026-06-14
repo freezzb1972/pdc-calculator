@@ -1,0 +1,23 @@
+{
+  "title": "GB标准合规校验",
+  "reference": "参考标准",
+  "project": "项目",
+  "columns": {
+    "item": "校验项",
+    "standard": "标准",
+    "status": "状态",
+    "description": "描述",
+    "source": "回路/线段"
+  },
+  "stats": {
+    "pass": "通过",
+    "warning": "警告",
+    "fail": "不通过",
+    "conclusion": "结论",
+    "allPass": "全部通过",
+    "needFix": "需整改"
+  },
+  "allPassed": "所有校验通过",
+  "noData": "无数据",
+  "noDataHint": "请先配置项目回路和线缆段"
+}

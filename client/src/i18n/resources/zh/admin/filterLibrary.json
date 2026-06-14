@@ -1,0 +1,49 @@
+{
+  "title": "滤波器库",
+  "btnAdd": "新增",
+  "btnImport": "批量导入",
+  "btnExport": "导出",
+  "deleteConfirm": "确定删除？",
+  "modalEdit": "编辑滤波器",
+  "modalNew": "新增滤波器",
+  "columns": {
+    "model": "型号",
+    "vendor": "厂商",
+    "voltage": "电压(V)",
+    "current": "电流(A)",
+    "phase": "相数",
+    "lines": "线数",
+    "dimensions": "尺寸",
+    "unitPrice": "单价(¥)",
+    "category": "类别",
+    "actions": "操作"
+  },
+  "form": {
+    "model": "型号",
+    "vendor": "厂商",
+    "voltage": "电压(V)",
+    "current": "电流(A)",
+    "phase": "相数",
+    "lines": "线数",
+    "dimensions": "尺寸",
+    "dimensionsPlaceholder": "如 300×200×100",
+    "unitPrice": "单价(¥)",
+    "category": "类别",
+    "categoryPlaceholder": "如 暗室/功放/传导",
+    "notes": "备注"
+  },
+  "messages": {
+    "updated": "已更新",
+    "created": "已创建",
+    "deleted": "已删除",
+    "exportSuccess": "导出成功",
+    "exportFailed": "导出失败",
+    "importSuccess": "导入成功",
+    "importFailed": "导入失败，请检查文件格式"
+  },
+  "phaseOptions": {
+    "single": "单相",
+    "three": "三相",
+    "dc": "直流"
+  }
+}

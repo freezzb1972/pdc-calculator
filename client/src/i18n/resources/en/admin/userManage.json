@@ -1,0 +1,41 @@
+{
+  "title": "User Management",
+  "btnAdd": "Add User",
+  "columns": {
+    "username": "Username",
+    "displayName": "Display Name",
+    "role": "Role",
+    "createdAt": "Created",
+    "actions": "Actions"
+  },
+  "roles": {
+    "admin": "Admin",
+    "editor": "Editor"
+  },
+  "actions": {
+    "changePassword": "Change PW",
+    "deleteConfirm": "Confirm delete this user?"
+  },
+  "createModal": {
+    "title": "Add User",
+    "username": "Username",
+    "password": "Password",
+    "displayName": "Display Name",
+    "role": "Role"
+  },
+  "changePasswordModal": {
+    "title": "Change Password",
+    "newPassword": "New Password",
+    "confirmPassword": "Confirm Password",
+    "passwordMinLength": "Password must be at least 6 characters",
+    "passwordMismatch": "Passwords do not match"
+  },
+  "messages": {
+    "userCreated": "User created",
+    "createFailed": "Create failed",
+    "deleted": "Deleted",
+    "deleteFailed": "Delete failed",
+    "passwordChanged": "Password changed",
+    "modifyFailed": "Modify failed"
+  }
+}

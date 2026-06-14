@@ -1,0 +1,37 @@
+{
+  "title": "转台拖链长度计算",
+  "labels": {
+    "turntableRadius": "转台半径 (m)",
+    "maxAngle": "最大旋转角 (°)",
+    "bendRadius": "电缆弯曲半径 (mm)",
+    "cableDiameter": "电缆外径 (mm)",
+    "cableCount": "电缆根数",
+    "chainHeight": "拖链高度 (mm)",
+    "chainWidth": "拖链宽度 (mm)"
+  },
+  "btnCalculate": "计算",
+  "result": {
+    "title": "计算结果",
+    "chainLength": "拖链长度",
+    "bendRadius": "弯曲半径",
+    "cablesPerLayer": "每层电缆数",
+    "layers": "层数",
+    "recommendedModel": "推荐型号",
+    "totalCableLength": "电缆总长"
+  },
+  "alert": {
+    "title": "公式待确认",
+    "desc": "当前计算为预估值，拖链长度和型号选择需与工程师讨论确认。影响参数：转台半径、旋转角度、电缆弯曲半径。"
+  },
+  "formula": {
+    "title": "计算公式说明:",
+    "chainLength": "链长 ≈ π × R × θ/180 + 直线余量(1.5m)",
+    "bendRadius": "弯曲半径 ≥ 电缆最小弯曲半径 × 1.5",
+    "warning": "⚠ 以上公式为估算，需工程师确认"
+  },
+  "models": {
+    "heavy": "重载",
+    "standard": "标准",
+    "series": "系列"
+  }
+}

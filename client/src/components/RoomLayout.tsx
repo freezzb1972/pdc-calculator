@@ -1,6 +1,7 @@
 import { useState, useRef, useEffect, useCallback } from 'react';
 import { Modal, Button, Space, Tag, message } from 'antd';
 import { BorderOutlined } from '@ant-design/icons';
+import { useAppTranslation } from '../i18n/useAppTranslation';
 
 interface DeviceNode {
   id: number;
@@ -36,6 +37,7 @@ interface RoomLayoutProps {
   onRouteChange: (segmentId: number, fromX: number, fromY: number, toX: number, toY: number, lengthM: number) => Promise<void>;
 }
 
+// Data lookup keys - these use Chinese values from the DB, not UI text
 const DEVICE_COLORS: Record<string, string> = {
   照明: '#faad14',
   天线塔: '#1677ff',
@@ -87,6 +89,7 @@ export default function RoomLayout({
   visible, onClose, room,
   routes, onDeviceMove, onRouteChange,
 }: RoomLayoutProps) {
+  const { t } = useAppTranslation('roomlayout');
   const svgRef = useRef<SVGSVGElement>(null);
   const [dragging, setDragging] = useState<{ deviceId: number; segId: number; origX: number; origY: number } | null>(null);
   const [scale, setScale] = useState(40);
@@ -184,6 +187,18 @@ export default function RoomLayout({
     setDraftPos(null);
   };
 
+  // Build a lookup for device type display names via i18n
+  const deviceTypeLabels: Record<string, string> = {
+    '照明': t('deviceTypes.照明'),
+    '天线塔': t('deviceTypes.天线塔'),
+    '摄像头': t('deviceTypes.摄像头'),
+    '转台': t('deviceTypes.转台'),
+    '插座': t('deviceTypes.插座'),
+    '功放': t('deviceTypes.功放'),
+    '接收机': t('deviceTypes.接收机'),
+    '滤波器': t('deviceTypes.滤波器'),
+  };
+
   // Collect all devices with their segment info
   const allDevices: (DeviceNode & { segIndex: number })[] = [];
   for (let i = 0; i < routes.length; i++) {
@@ -197,7 +212,7 @@ export default function RoomLayout({
 
   return (
     <Modal
-      title={`${room.room_type} 布局编辑 (${room.length_m}×${room.width_m}×${room.height_m}m)`}
+      title={`${room.room_type} ${t('layoutEdit')} (${room.length_m}×${room.width_m}×${room.height_m}m)`}
       open={visible}
       onCancel={onClose}
       width={960}
@@ -306,7 +321,7 @@ export default function RoomLayout({
                   </text>
                   {/* Label */}
                   <text x={cx} y={cy + r + 0.35} fontSize={0.22} textAnchor="middle" fill="#333" style={{ userSelect: 'none' }}>
-                    {dev.device_type}{dev.model ? `(${dev.model})` : ''}
+                    {deviceTypeLabels[dev.device_type] || dev.device_type}{dev.model ? `(${dev.model})` : ''}
                   </text>
                 </g>
               );
@@ -316,9 +331,9 @@ export default function RoomLayout({
 
         {/* Info Panel */}
         <div style={{ width: 240, overflow: 'auto', borderLeft: '1px solid #f0f0f0', paddingLeft: 16 }}>
-          <h4 style={{ margin: '0 0 12px' }}>设备列表</h4>
+          <h4 style={{ margin: '0 0 12px' }}>{t('title')}</h4>
           {allDevices.length === 0 ? (
-            <div style={{ color: '#999', fontSize: 13 }}>暂无设备</div>
+            <div style={{ color: '#999', fontSize: 13 }}>{t('noDevices')}</div>
           ) : (
             <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
               {allDevices.map(dev => {
@@ -335,7 +350,7 @@ export default function RoomLayout({
                   >
                     <Space>
                       <span style={{ fontSize: 14 }}>{getDeviceIcon(dev.device_type)}</span>
-                      <strong>{dev.device_type}</strong>
+                      <strong>{deviceTypeLabels[dev.device_type] || dev.device_type}</strong>
                     </Space>
                     <div style={{ color: '#666', marginTop: 2, fontSize: 12 }}>
                       pos: ({dev.pos_x.toFixed(1)}, {dev.pos_y.toFixed(1)})
@@ -352,12 +367,12 @@ export default function RoomLayout({
           )}
 
           <div style={{ marginTop: 16, padding: '8px 0', borderTop: '1px solid #f0f0f0' }}>
-            <h5 style={{ margin: '0 0 8px', color: '#666' }}>操作提示</h5>
+            <h5 style={{ margin: '0 0 8px', color: '#666' }}>{t('tips.title')}</h5>
             <ul style={{ fontSize: 12, color: '#888', paddingLeft: 16, margin: 0, lineHeight: 1.8 }}>
-              <li>拖拽设备图标调整位置</li>
-              <li>位置自动吸附到 0.5m 网格</li>
-              <li>线缆长度自动按曼哈顿距离计算</li>
-              <li>点击右侧设备可查看详情</li>
+              <li>{t('tips.drag')}</li>
+              <li>{t('tips.snap')}</li>
+              <li>{t('tips.autoCalc')}</li>
+              <li>{t('tips.clickDetail')}</li>
             </ul>
           </div>
         </div>

@@ -1,0 +1,22 @@
+{
+  "layoutEdit": "Layout Edit",
+  "title": "Device List",
+  "noDevices": "No Devices",
+  "tips": {
+    "title": "Instructions",
+    "drag": "Drag device icons to adjust position",
+    "snap": "Position snaps to 0.5m grid",
+    "autoCalc": "Cable length calculated via Manhattan distance",
+    "clickDetail": "Click devices on the right to view details"
+  },
+  "deviceTypes": {
+    "照明": "Lighting",
+    "天线塔": "Antenna Tower",
+    "摄像头": "Camera",
+    "转台": "Turntable",
+    "插座": "Socket",
+    "功放": "Amplifier",
+    "接收机": "Receiver",
+    "滤波器": "Filter"
+  }
+}

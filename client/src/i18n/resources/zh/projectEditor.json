@@ -1,0 +1,140 @@
+{
+  "room": {
+    "modalEdit": "编辑房间",
+    "modalNew": "新增房间",
+    "type": "房间类型",
+    "length": "长(m)",
+    "width": "宽(m)",
+    "height": "高(m)",
+    "lightModel": "照明型号",
+    "lightCount": "照明数量",
+    "lightCircuits": "照明回路数",
+    "types": {
+      "darkRoom": "暗室",
+      "controlRoom": "控制室",
+      "ampRoom": "功放室",
+      "conductionRoom": "传导室",
+      "loadRoom": "负载室",
+      "shieldedRoom": "屏蔽室"
+    },
+    "sectionTitle": "房间与配电",
+    "emptyHint": "暂无房间，请先新增房间",
+    "btnAdd": "新增房间",
+    "btnLayout": "布局",
+    "btnEdit": "编辑",
+    "deleteConfirm": "删除该房间及其所有回路？",
+    "lighting": "照明"
+  },
+  "circuit": {
+    "modalEdit": "编辑回路",
+    "modalNew": "新增回路",
+    "name": "回路名称",
+    "namePlaceholder": "如 主回路",
+    "purpose": "用途",
+    "purposePlaceholder": "如 暗室供电",
+    "filter": "滤波器",
+    "filterSearchPlaceholder": "搜索滤波器型号",
+    "voltageType": "电压类型",
+    "loadCurrent": "负载电流(A)",
+    "notes": "备注",
+    "columns": {
+      "name": "名称",
+      "filter": "滤波器",
+      "voltage": "电压",
+      "loadCurrent": "负载电流(A)",
+      "phase": "相数",
+      "ratedCurrent": "额定电流(A)",
+      "actions": "操作"
+    },
+    "btnAdd": "新增回路",
+    "btnAddSegment": "+线段",
+    "btnEdit": "编辑",
+    "deleteConfirm": "删除该回路？",
+    "deleteConfirmShort": "删除回路？",
+    "emptyHint": "暂无回路",
+    "unnamed": "未命名",
+    "recommendCable": "推荐电缆",
+    "connector": "连接器"
+  },
+  "segment": {
+    "modalEdit": "编辑线缆段",
+    "modalNew": "新增线缆段",
+    "type": "类型",
+    "parentSegment": "父段",
+    "parentPlaceholder": "无(主干)",
+    "cableSpec": "电缆规格",
+    "cableSearchPlaceholder": "搜索电缆型号",
+    "length": "长度(m)",
+    "parallelCount": "并联根数",
+    "from": "起点",
+    "fromPlaceholder": "如 滤波器出线端",
+    "to": "终点",
+    "toPlaceholder": "如 转台接线盒",
+    "types": {
+      "trunk": "主干",
+      "branch": "分支",
+      "parallel": "并联",
+      "dragChain": "拖链"
+    },
+    "columns": {
+      "type": "类型",
+      "cable": "电缆",
+      "crossSection": "截面",
+      "ampacity": "载流量",
+      "length": "长度(m)",
+      "parallel": "并联",
+      "route": "起点→终点",
+      "devices": "设备",
+      "actions": "操作"
+    },
+    "btnAdd": "+线段",
+    "btnAddDevice": "+设备",
+    "btnEdit": "编辑",
+    "deleteConfirm": "删除该线段？",
+    "deleteConfirmShort": "删除线段？",
+    "emptyHint": "暂无线缆段",
+    "recommendation": "推荐: 负载{{loadA}}A × 1.25 = {{requiredA}}A，推荐使用标★电缆"
+  },
+  "device": {
+    "modalEdit": "编辑设备",
+    "modalNew": "新增设备",
+    "type": "设备类型",
+    "model": "型号",
+    "ratedVoltage": "额定电压(V)",
+    "ratedCurrent": "额定电流(A)",
+    "quantity": "数量",
+    "unitPrice": "单价(¥)",
+    "types": {
+      "lighting": "照明",
+      "antennaTower": "天线塔",
+      "camera": "摄像头",
+      "turntable": "转台",
+      "socket": "插座",
+      "amplifier": "功放",
+      "receiver": "接收机",
+      "other": "其他"
+    },
+    "columns": {
+      "type": "类型",
+      "model": "型号",
+      "ratedVoltage": "额定电压",
+      "ratedCurrent": "额定电流",
+      "quantity": "数量",
+      "unitPrice": "单价(¥)",
+      "actions": "操作"
+    },
+    "btnEdit": "编辑",
+    "deleteConfirm": "删除该设备？"
+  },
+  "toolbar": {
+    "gbCheck": "GB校验",
+    "dragChainCalc": "拖链计算",
+    "bomList": "BOM清单",
+    "exportExcel": "导出Excel"
+  },
+  "info": {
+    "description": "描述",
+    "roomCount": "房间数",
+    "createdAt": "创建时间"
+  }
+}

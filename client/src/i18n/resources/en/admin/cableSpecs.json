@@ -1,0 +1,36 @@
+{
+  "title": "Cable Specifications",
+  "btnAdd": "Add",
+  "btnImport": "Batch Import",
+  "btnExport": "Export",
+  "searchPlaceholder": "Search model/conductor/insulation",
+  "deleteConfirm": "Confirm delete?",
+  "modalEdit": "Edit Cable",
+  "modalNew": "Add Cable",
+  "columns": {
+    "model": "Model",
+    "conductor": "Conductor",
+    "insulation": "Insulation",
+    "crossSection": "Cross Section (mm²)",
+    "cores": "Cores",
+    "ampacity": "Ampacity (A)",
+    "unitPrice": "Unit Price (¥/m)",
+    "actions": "Actions"
+  },
+  "form": {
+    "model": "Model",
+    "conductor": "Conductor Material",
+    "insulation": "Insulation",
+    "crossSection": "Cross Section (mm²)",
+    "cores": "Cores",
+    "ampacity": "Ampacity (A)",
+    "unitPrice": "Unit Price (¥/m)"
+  },
+  "messages": {
+    "updated": "Updated",
+    "created": "Created",
+    "deleted": "Deleted",
+    "importSuccess": "Import successful",
+    "importFailed": "Import failed"
+  }
+}

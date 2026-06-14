@@ -1,0 +1,39 @@
+{
+  "title": "电缆选型规则",
+  "btnAdd": "新增规则",
+  "deleteConfirm": "确定删除？",
+  "modalEdit": "编辑选型规则",
+  "modalNew": "新增选型规则",
+  "defaultPhase": "单相",
+  "columns": {
+    "phase": "相数",
+    "minCurrent": "最小电流(A)",
+    "maxCurrent": "最大电流(A)",
+    "minCrossSection": "最小截面(mm²)",
+    "recommendedCable": "推荐电缆",
+    "connector": "连接器",
+    "notes": "备注",
+    "actions": "操作"
+  },
+  "form": {
+    "phase": "相数",
+    "minCurrent": "电流下限(A)",
+    "maxCurrent": "电流上限(A)",
+    "recommendedCable": "推荐电缆",
+    "cablePlaceholder": "选择电缆规格",
+    "minCrossSection": "最小截面(mm²)",
+    "connector": "连接器类型",
+    "notes": "备注"
+  },
+  "messages": {
+    "updated": "已更新",
+    "created": "已创建",
+    "deleted": "已删除"
+  },
+  "phaseOptions": {
+    "single": "单相",
+    "three": "三相",
+    "dc": "直流",
+    "universal": "通用"
+  }
+}

@@ -1,0 +1,39 @@
+{
+  "title": "Cable Selection Rules",
+  "btnAdd": "Add Rule",
+  "deleteConfirm": "Confirm delete?",
+  "modalEdit": "Edit Selection Rule",
+  "modalNew": "Add Selection Rule",
+  "defaultPhase": "Single Phase",
+  "columns": {
+    "phase": "Phase",
+    "minCurrent": "Min Current (A)",
+    "maxCurrent": "Max Current (A)",
+    "minCrossSection": "Min Cross Section (mm²)",
+    "recommendedCable": "Recommended Cable",
+    "connector": "Connector",
+    "notes": "Notes",
+    "actions": "Actions"
+  },
+  "form": {
+    "phase": "Phase",
+    "minCurrent": "Current Lower Limit (A)",
+    "maxCurrent": "Current Upper Limit (A)",
+    "recommendedCable": "Recommended Cable",
+    "cablePlaceholder": "Select cable spec",
+    "minCrossSection": "Min Cross Section (mm²)",
+    "connector": "Connector Type",
+    "notes": "Notes"
+  },
+  "messages": {
+    "updated": "Updated",
+    "created": "Created",
+    "deleted": "Deleted"
+  },
+  "phaseOptions": {
+    "single": "Single Phase",
+    "three": "Three Phase",
+    "dc": "DC",
+    "universal": "Universal"
+  }
+}

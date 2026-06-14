@@ -1,0 +1,48 @@
+{
+  "title": "GB Standards Data Management",
+  "reference": "Reference: GB/T 16895, GB 50054, GB 50052, GB 50217",
+  "btnRefresh": "Refresh",
+  "tabs": {
+    "ampacity": "Ampacity Table (GB/T 16895)",
+    "derating": "Derating Factors (GB/T 16895)",
+    "safetyRules": "Safety Rules (GB 50054)"
+  },
+  "ampacity": {
+    "columns": {
+      "cableType": "Cable Type",
+      "layingMethod": "Laying Method",
+      "crossSection": "Cross Section (mm²)",
+      "ampacity": "Ampacity (A)",
+      "baseTemp": "Base Temp",
+      "version": "Version"
+    },
+    "editPrompt": "Enter new value"
+  },
+  "derating": {
+    "columns": {
+      "correctionType": "Correction Type",
+      "condition": "Condition",
+      "factorValue": "Factor Value",
+      "version": "Version"
+    }
+  },
+  "safetyRules": {
+    "columns": {
+      "ruleNo": "Rule No.",
+      "ruleName": "Rule Name",
+      "description": "Description",
+      "minValue": "Min Value",
+      "severity": "Severity",
+      "version": "Version"
+    },
+    "severity": {
+      "mandatory": "Mandatory",
+      "recommended": "Recommended",
+      "reference": "Reference"
+    }
+  },
+  "messages": {
+    "updated": "Updated",
+    "updateFailed": "Update failed"
+  }
+}

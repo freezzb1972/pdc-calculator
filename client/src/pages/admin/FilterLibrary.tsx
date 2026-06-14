@@ -1,10 +1,13 @@
 import { useEffect, useState, useRef } from 'react';
-import { Card, Table, Button, Space, Modal, Form, Input, InputNumber, Select, message, Popconfirm, Upload } from 'antd';
+import { Card, Table, Button, Space, Modal, Form, Input, InputNumber, Select, message, Popconfirm } from 'antd';
 import { PlusOutlined, EditOutlined, DeleteOutlined, UploadOutlined, DownloadOutlined } from '@ant-design/icons';
 import { api } from '../../api/client';
 import type { Filter } from '../../types';
+import { useAppTranslation } from '../../i18n/useAppTranslation';
+import BilingualText from '../../i18n/BilingualText';
 
 export default function FilterLibrary() {
+  const { t } = useAppTranslation('filterLibrary');
   const [data, setData] = useState<Filter[]>([]);
   const [loading, setLoading] = useState(false);
   const [modalOpen, setModalOpen] = useState(false);
@@ -27,10 +30,10 @@ export default function FilterLibrary() {
     const values = await form.validateFields();
     if (editing) {
       await api.updateFilter(editing.id, values);
-      message.success('已更新');
+      message.success(t('messages.updated'));
     } else {
       await api.createFilter(values);
-      message.success('已创建');
+      message.success(t('messages.created'));
     }
     setModalOpen(false);
     setEditing(null);
@@ -40,7 +43,7 @@ export default function FilterLibrary() {
 
   const handleDelete = async (id: number) => {
     await api.deleteFilter(id);
-    message.success('已删除');
+    message.success(t('messages.deleted'));
     load();
   };
 
@@ -54,9 +57,9 @@ export default function FilterLibrary() {
       a.download = 'filters-export.json';
       a.click();
       URL.revokeObjectURL(url);
-      message.success('导出成功');
+      message.success(t('messages.exportSuccess'));
     } catch {
-      message.error('导出失败');
+      message.error(t('messages.exportFailed'));
     }
   };
 
@@ -67,26 +70,26 @@ export default function FilterLibrary() {
       const text = await file.text();
       const data = JSON.parse(text);
       await api.importFilters(data);
-      message.success('导入成功');
+      message.success(t('messages.importSuccess'));
       load();
     } catch {
-      message.error('导入失败，请检查文件格式');
+      message.error(t('messages.importFailed'));
     }
     if (fileRef.current) fileRef.current.value = '';
   };
 
   const columns = [
-    { title: '型号', dataIndex: 'model_name', key: 'model_name' },
-    { title: '厂商', dataIndex: 'manufacturer', key: 'manufacturer' },
-    { title: '电压(V)', dataIndex: 'voltage_rating_v', key: 'voltage_rating_v' },
-    { title: '电流(A)', dataIndex: 'current_rating_a', key: 'current_rating_a' },
-    { title: '相数', dataIndex: 'phases', key: 'phases' },
-    { title: '线数', dataIndex: 'wire_count', key: 'wire_count' },
-    { title: '尺寸', dataIndex: 'dimensions', key: 'dimensions' },
-    { title: '单价(¥)', dataIndex: 'unit_price', key: 'unit_price', render: (v: number) => v?.toFixed(2) },
-    { title: '类别', dataIndex: 'category', key: 'category' },
+    { title: <BilingualText textKey="columns.model" ns="filterLibrary" />, dataIndex: 'model_name', key: 'model_name' },
+    { title: <BilingualText textKey="columns.vendor" ns="filterLibrary" />, dataIndex: 'manufacturer', key: 'manufacturer' },
+    { title: <BilingualText textKey="columns.voltage" ns="filterLibrary" />, dataIndex: 'voltage_rating_v', key: 'voltage_rating_v' },
+    { title: <BilingualText textKey="columns.current" ns="filterLibrary" />, dataIndex: 'current_rating_a', key: 'current_rating_a' },
+    { title: <BilingualText textKey="columns.phase" ns="filterLibrary" />, dataIndex: 'phases', key: 'phases' },
+    { title: <BilingualText textKey="columns.lines" ns="filterLibrary" />, dataIndex: 'wire_count', key: 'wire_count' },
+    { title: <BilingualText textKey="columns.dimensions" ns="filterLibrary" />, dataIndex: 'dimensions', key: 'dimensions' },
+    { title: <BilingualText textKey="columns.unitPrice" ns="filterLibrary" />, dataIndex: 'unit_price', key: 'unit_price', render: (v: number) => v?.toFixed(2) },
+    { title: <BilingualText textKey="columns.category" ns="filterLibrary" />, dataIndex: 'category', key: 'category' },
     {
-      title: '操作', key: 'action', width: 120,
+      title: <BilingualText textKey="columns.actions" ns="filterLibrary" />, key: 'action', width: 120,
       render: (_: any, row: Filter) => (
         <Space>
           <Button size="small" icon={<EditOutlined />} onClick={() => {
@@ -94,7 +97,7 @@ export default function FilterLibrary() {
             form.setFieldsValue(row);
             setModalOpen(true);
           }} />
-          <Popconfirm title="确定删除？" onConfirm={() => handleDelete(row.id)}>
+          <Popconfirm title={t('deleteConfirm')} onConfirm={() => handleDelete(row.id)}>
             <Button size="small" danger icon={<DeleteOutlined />} />
           </Popconfirm>
         </Space>
@@ -104,38 +107,42 @@ export default function FilterLibrary() {
 
   return (
     <Card
-      title="滤波器库"
+      title={t('title')}
       extra={
         <Space>
           <input ref={fileRef} type="file" accept=".json" style={{ display: 'none' }} onChange={handleImport} />
-          <Button icon={<UploadOutlined />} onClick={() => fileRef.current?.click()}>批量导入</Button>
-          <Button icon={<DownloadOutlined />} onClick={handleExport}>导出</Button>
+          <Button icon={<UploadOutlined />} onClick={() => fileRef.current?.click()}>{t('btnImport')}</Button>
+          <Button icon={<DownloadOutlined />} onClick={handleExport}>{t('btnExport')}</Button>
           <Button type="primary" icon={<PlusOutlined />} onClick={() => {
             setEditing(null);
             form.resetFields();
             setModalOpen(true);
-          }}>新增</Button>
+          }}>{t('btnAdd')}</Button>
         </Space>
       }
     >
       <Table rowKey="id" columns={columns} dataSource={data} loading={loading} size="small" pagination={{ pageSize: 50 }} />
 
-      <Modal title={editing ? '编辑滤波器' : '新增滤波器'} open={modalOpen} onOk={handleSave} onCancel={() => { setModalOpen(false); setEditing(null); }} width={640}>
+      <Modal title={editing ? t('modalEdit') : t('modalNew')} open={modalOpen} onOk={handleSave} onCancel={() => { setModalOpen(false); setEditing(null); }} width={640}>
         <Form form={form} layout="vertical">
-          <Form.Item name="model_name" label="型号" rules={[{ required: true }]}><Input /></Form.Item>
-          <Form.Item name="manufacturer" label="厂商"><Input /></Form.Item>
+          <Form.Item name="model_name" label={t('form.model')} rules={[{ required: true }]}><Input /></Form.Item>
+          <Form.Item name="manufacturer" label={t('form.vendor')}><Input /></Form.Item>
           <Space style={{ width: '100%' }} size={16}>
-            <Form.Item name="voltage_rating_v" label="电压(V)" rules={[{ required: true }]}><InputNumber style={{ width: 140 }} /></Form.Item>
-            <Form.Item name="current_rating_a" label="电流(A)" rules={[{ required: true }]}><InputNumber style={{ width: 140 }} /></Form.Item>
+            <Form.Item name="voltage_rating_v" label={t('form.voltage')} rules={[{ required: true }]}><InputNumber style={{ width: 140 }} /></Form.Item>
+            <Form.Item name="current_rating_a" label={t('form.current')} rules={[{ required: true }]}><InputNumber style={{ width: 140 }} /></Form.Item>
           </Space>
           <Space style={{ width: '100%' }} size={16}>
-            <Form.Item name="phases" label="相数"><Select style={{ width: 140 }} options={[{ value: '单相' }, { value: '三相' }, { value: '直流' }]} /></Form.Item>
-            <Form.Item name="wire_count" label="线数"><InputNumber style={{ width: 140 }} /></Form.Item>
+            <Form.Item name="phases" label={t('form.phase')}><Select style={{ width: 140 }} options={[
+              { value: '单相', label: t('phaseOptions.single') },
+              { value: '三相', label: t('phaseOptions.three') },
+              { value: '直流', label: t('phaseOptions.dc') },
+            ]} /></Form.Item>
+            <Form.Item name="wire_count" label={t('form.lines')}><InputNumber style={{ width: 140 }} /></Form.Item>
           </Space>
-          <Form.Item name="dimensions" label="尺寸"><Input placeholder="如 300×200×100" /></Form.Item>
-          <Form.Item name="unit_price" label="单价(¥)"><InputNumber style={{ width: 200 }} precision={2} /></Form.Item>
-          <Form.Item name="category" label="类别"><Input placeholder="如 暗室/功放/传导" /></Form.Item>
-          <Form.Item name="notes" label="备注"><Input.TextArea rows={2} /></Form.Item>
+          <Form.Item name="dimensions" label={t('form.dimensions')}><Input placeholder={t('form.dimensionsPlaceholder')} /></Form.Item>
+          <Form.Item name="unit_price" label={t('form.unitPrice')}><InputNumber style={{ width: 200 }} precision={2} /></Form.Item>
+          <Form.Item name="category" label={t('form.category')}><Input placeholder={t('form.categoryPlaceholder')} /></Form.Item>
+          <Form.Item name="notes" label={t('form.notes')}><Input.TextArea rows={2} /></Form.Item>
         </Form>
       </Modal>
     </Card>

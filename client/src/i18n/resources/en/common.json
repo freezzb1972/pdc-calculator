@@ -1,0 +1,47 @@
+{
+  "save": "Save",
+  "cancel": "Cancel",
+  "delete": "Delete",
+  "edit": "Edit",
+  "add": "Add",
+  "search": "Search",
+  "export": "Export",
+  "import": "Import",
+  "refresh": "Refresh",
+  "close": "Close",
+  "confirm": "Confirm",
+  "back": "Back",
+  "loading": "Loading...",
+  "noData": "No Data",
+  "units": {
+    "meter": "m",
+    "millimeter": "mm",
+    "ampere": "A",
+    "volt": "V",
+    "yuan": "¥",
+    "piece": "pcs",
+    "room": "rooms",
+    "kind": "types",
+    "item": "items"
+  },
+  "status": {
+    "pass": "Pass",
+    "warning": "Warning",
+    "fail": "Fail"
+  },
+  "msg": {
+    "created": "Created",
+    "updated": "Updated",
+    "deleted": "Deleted",
+    "importSuccess": "Import successful",
+    "importFailed": "Import failed, please check file format",
+    "exportSuccess": "Export successful",
+    "exportFailed": "Export failed",
+    "updateFailed": "Update failed",
+    "loadFailed": "Load failed",
+    "deleteFailed": "Delete failed",
+    "createFailed": "Create failed",
+    "modifyFailed": "Modify failed",
+    "networkError": "Network error"
+  }
+}

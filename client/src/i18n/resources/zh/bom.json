@@ -1,0 +1,27 @@
+{
+  "title": "物料清单 (BOM)",
+  "btnExport": "导出Excel",
+  "errorLoad": "无法加载BOM数据",
+  "columns": {
+    "category": "类别",
+    "name": "名称",
+    "spec": "规格",
+    "quantity": "数量",
+    "unit": "单位",
+    "unitPrice": "单价(¥)",
+    "subtotal": "小计(¥)"
+  },
+  "categories": {
+    "filter": "滤波器",
+    "cable": "电缆",
+    "accessory": "附件",
+    "device": "设备"
+  },
+  "stats": {
+    "filterCount": "滤波器数",
+    "cableLength": "电缆总长",
+    "deviceCount": "设备数",
+    "totalPrice": "总价"
+  },
+  "total": "合计"
+}

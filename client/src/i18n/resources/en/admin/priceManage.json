@@ -1,0 +1,20 @@
+{
+  "title": "Price Change History",
+  "filterPlaceholder": "Filter by type",
+  "filterOptions": {
+    "filter": "Filter",
+    "cable": "Cable"
+  },
+  "columns": {
+    "type": "Type",
+    "item": "Item",
+    "oldPrice": "Old Price",
+    "newPrice": "New Price",
+    "source": "Source",
+    "time": "Time"
+  },
+  "tags": {
+    "filter": "Filter",
+    "cable": "Cable"
+  }
+}

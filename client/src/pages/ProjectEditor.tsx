@@ -10,6 +10,7 @@ import type { Project, Room, Circuit, CableSegment, Device } from '../types';
 import ComplianceReport from '../components/ComplianceReport';
 import DragChainCalc from '../components/DragChainCalc';
 import RoomLayout from '../components/RoomLayout';
+import { useAppTranslation } from '../i18n/useAppTranslation';
 
 const { Title } = Typography;
 
@@ -20,6 +21,7 @@ function RoomForm({ visible, onClose, onSave, initial }: {
   onSave: (data: any) => Promise<void>;
   initial?: Room | null;
 }) {
+  const { t } = useAppTranslation('projectEditor');
   const [form] = Form.useForm();
   useEffect(() => {
     if (initial) form.setFieldsValue(initial);
@@ -27,30 +29,30 @@ function RoomForm({ visible, onClose, onSave, initial }: {
   }, [initial, visible]);
 
   return (
-    <Modal title={initial ? '编辑房间' : '新增房间'} open={visible} onOk={async () => {
+    <Modal title={initial ? t('room.modalEdit') : t('room.modalNew')} open={visible} onOk={async () => {
       await onSave(await form.validateFields());
       onClose();
     }} onCancel={onClose} width={520}>
       <Form form={form} layout="vertical">
-        <Form.Item name="room_type" label="房间类型" rules={[{ required: true }]}>
+        <Form.Item name="room_type" label={t('room.type')} rules={[{ required: true }]}>
           <Select options={[
-            { value: '暗室', label: '暗室' },
-            { value: '控制室', label: '控制室' },
-            { value: '功放室', label: '功放室' },
-            { value: '传导室', label: '传导室' },
-            { value: '负载室', label: '负载室' },
-            { value: '屏蔽室', label: '屏蔽室' },
+            { value: '暗室', label: t('room.types.darkRoom') },
+            { value: '控制室', label: t('room.types.controlRoom') },
+            { value: '功放室', label: t('room.types.ampRoom') },
+            { value: '传导室', label: t('room.types.conductionRoom') },
+            { value: '负载室', label: t('room.types.loadRoom') },
+            { value: '屏蔽室', label: t('room.types.shieldedRoom') },
           ]} />
         </Form.Item>
         <Space style={{ width: '100%' }} size={16}>
-          <Form.Item name="length_m" label="长(m)" rules={[{ required: true }]}><InputNumber style={{ width: 140 }} step={0.1} /></Form.Item>
-          <Form.Item name="width_m" label="宽(m)" rules={[{ required: true }]}><InputNumber style={{ width: 140 }} step={0.1} /></Form.Item>
-          <Form.Item name="height_m" label="高(m)" rules={[{ required: true }]}><InputNumber style={{ width: 140 }} step={0.1} /></Form.Item>
+          <Form.Item name="length_m" label={t('room.length')} rules={[{ required: true }]}><InputNumber style={{ width: 140 }} step={0.1} /></Form.Item>
+          <Form.Item name="width_m" label={t('room.width')} rules={[{ required: true }]}><InputNumber style={{ width: 140 }} step={0.1} /></Form.Item>
+          <Form.Item name="height_m" label={t('room.height')} rules={[{ required: true }]}><InputNumber style={{ width: 140 }} step={0.1} /></Form.Item>
         </Space>
         <Space style={{ width: '100%' }} size={16}>
-          <Form.Item name="light_model" label="照明型号"><Input style={{ width: 180 }} /></Form.Item>
-          <Form.Item name="light_count" label="照明数量"><InputNumber style={{ width: 120 }} /></Form.Item>
-          <Form.Item name="light_circuits" label="照明回路数"><InputNumber style={{ width: 120 }} /></Form.Item>
+          <Form.Item name="light_model" label={t('room.lightModel')}><Input style={{ width: 180 }} /></Form.Item>
+          <Form.Item name="light_count" label={t('room.lightCount')}><InputNumber style={{ width: 120 }} /></Form.Item>
+          <Form.Item name="light_circuits" label={t('room.lightCircuits')}><InputNumber style={{ width: 120 }} /></Form.Item>
         </Space>
       </Form>
     </Modal>
@@ -65,6 +67,7 @@ function CircuitForm({ visible, onClose, onSave, initial, roomId }: {
   initial?: Circuit | null;
   roomId: number;
 }) {
+  const { t } = useAppTranslation('projectEditor');
   const [filters, setFilters] = useState<any[]>([]);
   const [recommendation, setRecommendation] = useState<any>(null);
   const [form] = Form.useForm();
@@ -108,15 +111,15 @@ function CircuitForm({ visible, onClose, onSave, initial, roomId }: {
   };
 
   return (
-    <Modal title={initial ? '编辑回路' : '新增回路'} open={visible} onOk={async () => {
+    <Modal title={initial ? t('circuit.modalEdit') : t('circuit.modalNew')} open={visible} onOk={async () => {
       await onSave(await form.validateFields());
       onClose();
     }} onCancel={onClose} width={600}>
       <Form form={form} layout="vertical">
-        <Form.Item name="filter_id" label="滤波器" rules={[{ required: true }]}>
+        <Form.Item name="filter_id" label={t('circuit.filter')} rules={[{ required: true }]}>
           <Select
             showSearch
-            placeholder="搜索滤波器型号"
+            placeholder={t('circuit.filterSearchPlaceholder')}
             filterOption={(input, option) => (option?.label as string || '').includes(input)}
             onChange={(val) => val && handleFilterChange(val)}
             options={filters.map(f => ({ value: f.id, label: `${f.model_name} (${f.current_rating_a}A ${f.phases})` }))}
@@ -124,18 +127,18 @@ function CircuitForm({ visible, onClose, onSave, initial, roomId }: {
         </Form.Item>
         {recommendation && (
           <div style={{ padding: '8px 12px', background: '#f6ffed', border: '1px solid #b7eb8f', borderRadius: 6, marginBottom: 12 }}>
-            <strong>推荐电缆:</strong> {recommendation.model_name}
+            <strong>{t('circuit.recommendCable')}:</strong> {recommendation.model_name}
              ({recommendation.cross_section_mm2}mm², {recommendation.max_current_a}A)
-            &nbsp;连接器: {recommendation.connector_type || '--'}
+            &nbsp;{t('circuit.connector')}: {recommendation.connector_type || '--'}
             &nbsp;¥{recommendation.unit_price}/m
           </div>
         )}
         <Space style={{ width: '100%' }} size={16}>
-          <Form.Item name="name" label="回路名称"><Input style={{ width: 200 }} placeholder="如 主回路" /></Form.Item>
-          <Form.Item name="purpose" label="用途"><Input style={{ width: 200 }} placeholder="如 暗室供电" /></Form.Item>
+          <Form.Item name="name" label={t('circuit.name')}><Input style={{ width: 200 }} placeholder={t('circuit.namePlaceholder')} /></Form.Item>
+          <Form.Item name="purpose" label={t('circuit.purpose')}><Input style={{ width: 200 }} placeholder={t('circuit.purposePlaceholder')} /></Form.Item>
         </Space>
         <Space style={{ width: '100%' }} size={16}>
-          <Form.Item name="voltage_type" label="电压类型">
+          <Form.Item name="voltage_type" label={t('circuit.voltageType')}>
             <Select style={{ width: 160 }} options={[
               { value: 'AC380V', label: 'AC 380V' },
               { value: 'AC220V', label: 'AC 220V' },
@@ -143,11 +146,11 @@ function CircuitForm({ visible, onClose, onSave, initial, roomId }: {
               { value: 'DC48V', label: 'DC 48V' },
             ]} />
           </Form.Item>
-          <Form.Item name="load_current_a" label="负载电流(A)" rules={[{ required: true }]}>
+          <Form.Item name="load_current_a" label={t('circuit.loadCurrent')} rules={[{ required: true }]}>
             <InputNumber style={{ width: 160 }} step={0.1} />
           </Form.Item>
         </Space>
-        <Form.Item name="notes" label="备注"><Input.TextArea rows={2} /></Form.Item>
+        <Form.Item name="notes" label={t('circuit.notes')}><Input.TextArea rows={2} /></Form.Item>
       </Form>
     </Modal>
   );
@@ -163,6 +166,7 @@ function SegmentForm({ visible, onClose, onSave, initial, circuitId, parentSegme
   parentSegments: CableSegment[];
   circuitLoadA?: number;
 }) {
+  const { t } = useAppTranslation('projectEditor');
   const [cables, setCables] = useState<any[]>([]);
   const [highlightCable, setHighlightCable] = useState<number | null>(null);
   const [form] = Form.useForm();
@@ -193,46 +197,46 @@ function SegmentForm({ visible, onClose, onSave, initial, circuitId, parentSegme
   });
 
   return (
-    <Modal title={initial ? '编辑线缆段' : '新增线缆段'} open={visible} onOk={async () => {
+    <Modal title={initial ? t('segment.modalEdit') : t('segment.modalNew')} open={visible} onOk={async () => {
       await onSave({ ...await form.validateFields(), circuit_id: circuitId });
       onClose();
     }} onCancel={onClose} width={640}>
       <Form form={form} layout="vertical">
         <Space style={{ width: '100%' }} size={16}>
-          <Form.Item name="segment_type" label="类型" rules={[{ required: true }]}>
+          <Form.Item name="segment_type" label={t('segment.type')} rules={[{ required: true }]}>
             <Select style={{ width: 160 }} options={[
-              { value: 'trunk', label: '主干' },
-              { value: 'branch', label: '分支' },
-              { value: 'parallel', label: '并联' },
-              { value: 'dragchain', label: '拖链' },
+              { value: 'trunk', label: t('segment.types.trunk') },
+              { value: 'branch', label: t('segment.types.branch') },
+              { value: 'parallel', label: t('segment.types.parallel') },
+              { value: 'dragchain', label: t('segment.types.dragChain') },
             ]} />
           </Form.Item>
           {parentSegments.length > 0 && (
-            <Form.Item name="parent_segment_id" label="父段">
-              <Select style={{ width: 200 }} allowClear placeholder="无(主干)" options={parentSegments.map(s => ({ value: s.id, label: s.segment_type + ' #' + s.id }))} />
+            <Form.Item name="parent_segment_id" label={t('segment.parentSegment')}>
+              <Select style={{ width: 200 }} allowClear placeholder={t('segment.parentPlaceholder')} options={parentSegments.map(s => ({ value: s.id, label: s.segment_type + ' #' + s.id }))} />
             </Form.Item>
           )}
         </Space>
-        <Form.Item name="cable_spec_id" label="电缆规格" rules={[{ required: true }]}>
+        <Form.Item name="cable_spec_id" label={t('segment.cableSpec')} rules={[{ required: true }]}>
           <Select
             showSearch
-            placeholder="搜索电缆型号"
+            placeholder={t('segment.cableSearchPlaceholder')}
             filterOption={(input, option) => (option?.label as string || '').includes(input)}
             options={labels}
           />
         </Form.Item>
         {highlightCable && circuitLoadA && (
           <div style={{ padding: '8px 12px', background: '#fffbe6', border: '1px solid #ffe58f', borderRadius: 6, marginBottom: 12 }}>
-            推荐: 负载{circuitLoadA}A × 1.25 = {(circuitLoadA * 1.25).toFixed(1)}A，推荐使用标★电缆
+            {t('segment.recommendation', { loadA: circuitLoadA, requiredA: (circuitLoadA * 1.25).toFixed(1) })}
           </div>
         )}
         <Space style={{ width: '100%' }} size={16}>
-          <Form.Item name="length_m" label="长度(m)" rules={[{ required: true }]}><InputNumber style={{ width: 160 }} step={0.5} /></Form.Item>
-          <Form.Item name="parallel_count" label="并联根数"><InputNumber style={{ width: 160 }} min={1} /></Form.Item>
+          <Form.Item name="length_m" label={t('segment.length')} rules={[{ required: true }]}><InputNumber style={{ width: 160 }} step={0.5} /></Form.Item>
+          <Form.Item name="parallel_count" label={t('segment.parallelCount')}><InputNumber style={{ width: 160 }} min={1} /></Form.Item>
         </Space>
         <Space style={{ width: '100%' }} size={16}>
-          <Form.Item name="from_location" label="起点"><Input style={{ width: 220 }} placeholder="如 滤波器出线端" /></Form.Item>
-          <Form.Item name="to_location" label="终点"><Input style={{ width: 220 }} placeholder="如 转台接线盒" /></Form.Item>
+          <Form.Item name="from_location" label={t('segment.from')}><Input style={{ width: 220 }} placeholder={t('segment.fromPlaceholder')} /></Form.Item>
+          <Form.Item name="to_location" label={t('segment.to')}><Input style={{ width: 220 }} placeholder={t('segment.toPlaceholder')} /></Form.Item>
         </Space>
       </Form>
     </Modal>
@@ -247,6 +251,7 @@ function DeviceForm({ visible, onClose, onSave, initial, segmentId }: {
   initial?: Device | null;
   segmentId: number;
 }) {
+  const { t } = useAppTranslation('projectEditor');
   const [form] = Form.useForm();
   useEffect(() => {
     if (initial) form.setFieldsValue(initial);
@@ -254,30 +259,30 @@ function DeviceForm({ visible, onClose, onSave, initial, segmentId }: {
   }, [initial, visible]);
 
   return (
-    <Modal title={initial ? '编辑设备' : '新增设备'} open={visible} onOk={async () => {
+    <Modal title={initial ? t('device.modalEdit') : t('device.modalNew')} open={visible} onOk={async () => {
       await onSave({ ...await form.validateFields(), segment_id: segmentId });
       onClose();
     }} onCancel={onClose} width={520}>
       <Form form={form} layout="vertical">
-        <Form.Item name="device_type" label="设备类型" rules={[{ required: true }]}>
+        <Form.Item name="device_type" label={t('device.type')} rules={[{ required: true }]}>
           <Select options={[
-            { value: '照明', label: '照明' },
-            { value: '天线塔', label: '天线塔' },
-            { value: '摄像头', label: '摄像头' },
-            { value: '转台', label: '转台' },
-            { value: '插座', label: '插座' },
-            { value: '功放', label: '功放' },
-            { value: '接收机', label: '接收机' },
-            { value: '其他', label: '其他' },
+            { value: '照明', label: t('device.types.lighting') },
+            { value: '天线塔', label: t('device.types.antennaTower') },
+            { value: '摄像头', label: t('device.types.camera') },
+            { value: '转台', label: t('device.types.turntable') },
+            { value: '插座', label: t('device.types.socket') },
+            { value: '功放', label: t('device.types.amplifier') },
+            { value: '接收机', label: t('device.types.receiver') },
+            { value: '其他', label: t('device.types.other') },
           ]} />
         </Form.Item>
-        <Form.Item name="model" label="型号"><Input /></Form.Item>
+        <Form.Item name="model" label={t('device.model')}><Input /></Form.Item>
         <Space style={{ width: '100%' }} size={16}>
-          <Form.Item name="rating_v" label="额定电压(V)"><InputNumber style={{ width: 140 }} /></Form.Item>
-          <Form.Item name="rating_a" label="额定电流(A)"><InputNumber style={{ width: 140 }} /></Form.Item>
-          <Form.Item name="quantity" label="数量"><InputNumber style={{ width: 120 }} min={1} /></Form.Item>
+          <Form.Item name="rating_v" label={t('device.ratedVoltage')}><InputNumber style={{ width: 140 }} /></Form.Item>
+          <Form.Item name="rating_a" label={t('device.ratedCurrent')}><InputNumber style={{ width: 140 }} /></Form.Item>
+          <Form.Item name="quantity" label={t('device.quantity')}><InputNumber style={{ width: 120 }} min={1} /></Form.Item>
         </Space>
-        <Form.Item name="unit_price" label="单价(¥)"><InputNumber style={{ width: 200 }} precision={2} /></Form.Item>
+        <Form.Item name="unit_price" label={t('device.unitPrice')}><InputNumber style={{ width: 200 }} precision={2} /></Form.Item>
       </Form>
     </Modal>
   );
@@ -288,6 +293,7 @@ export default function ProjectEditor() {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
   const projectId = Number(id);
+  const { t } = useAppTranslation('projectEditor');
 
   const [project, setProject] = useState<Project | null>(null);
   const [rooms, setRooms] = useState<Room[]>([]);
@@ -413,13 +419,13 @@ export default function ProjectEditor() {
       for (const seg of circuit.segments || []) {
         routes.push({
           ...seg,
-          circuit_name: circuit.name || '未命名',
+          circuit_name: circuit.name || t('circuit.unnamed'),
           filter_model: circuit.filter_model,
         });
       }
     }
     setLayoutRoutes(routes);
-  }, [projectId]);
+  }, [projectId, t]);
 
   const handleLayoutOpen = async (room: Room) => {
     setLayoutRoom(room);
@@ -451,15 +457,16 @@ export default function ProjectEditor() {
     api.exportProjectExcel(projectId);
   };
 
+  // Column definitions moved inside component to access t()
   const circuitColumns = (roomId: number) => [
-    { title: '名称', dataIndex: 'name', key: 'name', width: 100 },
-    { title: '滤波器', dataIndex: 'filter_model', key: 'filter_model', width: 140 },
-    { title: '电压', dataIndex: 'voltage_type', key: 'voltage_type', width: 90 },
-    { title: '负载电流(A)', dataIndex: 'load_current_a', key: 'load_current_a', width: 110 },
-    { title: '相数', dataIndex: 'phases', key: 'phases', width: 60 },
-    { title: '额定电流(A)', dataIndex: 'current_rating_a', key: 'current_rating_a', width: 100 },
+    { title: t('circuit.columns.name'), dataIndex: 'name', key: 'name', width: 100 },
+    { title: t('circuit.columns.filter'), dataIndex: 'filter_model', key: 'filter_model', width: 140 },
+    { title: t('circuit.columns.voltage'), dataIndex: 'voltage_type', key: 'voltage_type', width: 90 },
+    { title: t('circuit.columns.loadCurrent'), dataIndex: 'load_current_a', key: 'load_current_a', width: 110 },
+    { title: t('circuit.columns.phase'), dataIndex: 'phases', key: 'phases', width: 60 },
+    { title: t('circuit.columns.ratedCurrent'), dataIndex: 'current_rating_a', key: 'current_rating_a', width: 100 },
     {
-      title: '操作', key: 'action', width: 160,
+      title: t('circuit.columns.actions'), key: 'action', width: 160,
       render: (_: any, row: Circuit) => (
         <Space size="small">
           <Button size="small" type="primary" ghost onClick={() => {
@@ -467,13 +474,13 @@ export default function ProjectEditor() {
             setActiveCircuit(row.id);
             setSegmentModal(true);
             setSegmentEdit(null);
-          }}>+线段</Button>
+          }}>{t('circuit.btnAddSegment')}</Button>
           <Button size="small" onClick={() => {
             setActiveRoom(roomId);
             setCircuitEdit(row);
             setCircuitModal(true);
-          }}>编辑</Button>
-          <Popconfirm title="删除该回路？" onConfirm={() => deleteCircuit(row.id)}>
+          }}>{t('circuit.btnEdit')}</Button>
+          <Popconfirm title={t('circuit.deleteConfirm')} onConfirm={() => deleteCircuit(row.id)}>
             <Button size="small" danger icon={<DeleteOutlined />} />
           </Popconfirm>
         </Space>
@@ -482,18 +489,18 @@ export default function ProjectEditor() {
   ];
 
   const segmentColumns = (roomId: number, circuitId: number) => [
-    { title: '类型', dataIndex: 'segment_type', key: 'segment_type', width: 80, render: (v: string) => <Tag>{v}</Tag> },
-    { title: '电缆', dataIndex: 'cable_model', key: 'cable_model', width: 160 },
-    { title: '截面', dataIndex: 'cross_section_mm2', key: 'cross_section_mm2', width: 80, render: (v: number) => v ? `${v}mm²` : '-' },
-    { title: '载流量', dataIndex: 'max_current_a', key: 'max_current_a', width: 70, render: (v: number) => v ? `${v}A` : '-' },
-    { title: '长度(m)', dataIndex: 'length_m', key: 'length_m', width: 80 },
-    { title: '并联', dataIndex: 'parallel_count', key: 'parallel_count', width: 60 },
-    { title: '起点→终点', key: 'location', width: 180,
+    { title: t('segment.columns.type'), dataIndex: 'segment_type', key: 'segment_type', width: 80, render: (v: string) => <Tag>{v}</Tag> },
+    { title: t('segment.columns.cable'), dataIndex: 'cable_model', key: 'cable_model', width: 160 },
+    { title: t('segment.columns.crossSection'), dataIndex: 'cross_section_mm2', key: 'cross_section_mm2', width: 80, render: (v: number) => v ? `${v}mm²` : '-' },
+    { title: t('segment.columns.ampacity'), dataIndex: 'max_current_a', key: 'max_current_a', width: 70, render: (v: number) => v ? `${v}A` : '-' },
+    { title: t('segment.columns.length'), dataIndex: 'length_m', key: 'length_m', width: 80 },
+    { title: t('segment.columns.parallel'), dataIndex: 'parallel_count', key: 'parallel_count', width: 60 },
+    { title: t('segment.columns.route'), key: 'location', width: 180,
       render: (_: any, r: CableSegment) => `${r.from_location || '?'} → ${r.to_location || '?'}` },
-    { title: '设备', key: 'devices', width: 120,
+    { title: t('segment.columns.devices'), key: 'devices', width: 120,
       render: (_: any, r: CableSegment) => r.devices?.length ? `${r.devices.length}个` : '-' },
     {
-      title: '操作', key: 'action', width: 160,
+      title: t('segment.columns.actions'), key: 'action', width: 160,
       render: (_: any, row: CableSegment) => (
         <Space size="small">
           <Button size="small" type="primary" ghost onClick={() => {
@@ -502,14 +509,14 @@ export default function ProjectEditor() {
             setActiveSegment(row.id);
             setDeviceModal(true);
             setDeviceEdit(null);
-          }}>+设备</Button>
+          }}>{t('segment.btnAddDevice')}</Button>
           <Button size="small" onClick={() => {
             setActiveRoom(roomId);
             setActiveCircuit(circuitId);
             setSegmentEdit(row);
             setSegmentModal(true);
-          }}>编辑</Button>
-          <Popconfirm title="删除该线段？" onConfirm={() => deleteSegment(row.id)}>
+          }}>{t('segment.btnEdit')}</Button>
+          <Popconfirm title={t('segment.deleteConfirm')} onConfirm={() => deleteSegment(row.id)}>
             <Button size="small" danger icon={<DeleteOutlined />} />
           </Popconfirm>
         </Space>
@@ -518,22 +525,22 @@ export default function ProjectEditor() {
   ];
 
   const deviceColumns = [
-    { title: '类型', dataIndex: 'device_type', key: 'device_type', width: 100 },
-    { title: '型号', dataIndex: 'model', key: 'model', width: 120 },
-    { title: '额定电压', dataIndex: 'rating_v', key: 'rating_v', width: 90, render: (v: number) => v ? `${v}V` : '-' },
-    { title: '额定电流', dataIndex: 'rating_a', key: 'rating_a', width: 90, render: (v: number) => v ? `${v}A` : '-' },
-    { title: '数量', dataIndex: 'quantity', key: 'quantity', width: 60 },
-    { title: '单价(¥)', dataIndex: 'unit_price', key: 'unit_price', width: 80, render: (v: number) => v?.toFixed(2) },
+    { title: t('device.columns.type'), dataIndex: 'device_type', key: 'device_type', width: 100 },
+    { title: t('device.columns.model'), dataIndex: 'model', key: 'model', width: 120 },
+    { title: t('device.columns.ratedVoltage'), dataIndex: 'rating_v', key: 'rating_v', width: 90, render: (v: number) => v ? `${v}V` : '-' },
+    { title: t('device.columns.ratedCurrent'), dataIndex: 'rating_a', key: 'rating_a', width: 90, render: (v: number) => v ? `${v}A` : '-' },
+    { title: t('device.columns.quantity'), dataIndex: 'quantity', key: 'quantity', width: 60 },
+    { title: t('device.columns.unitPrice'), dataIndex: 'unit_price', key: 'unit_price', width: 80, render: (v: number) => v?.toFixed(2) },
     {
-      title: '操作', key: 'action', width: 100,
+      title: t('device.columns.actions'), key: 'action', width: 100,
       render: (_: any, row: Device) => (
         <Space size="small">
           <Button size="small" onClick={() => {
             setActiveSegment(row.segment_id);
             setDeviceEdit(row);
             setDeviceModal(true);
-          }}>编辑</Button>
-          <Popconfirm title="删除该设备？" onConfirm={() => deleteDevice(row.id)}>
+          }}>{t('device.btnEdit')}</Button>
+          <Popconfirm title={t('device.deleteConfirm')} onConfirm={() => deleteDevice(row.id)}>
             <Button size="small" danger icon={<DeleteOutlined />} />
           </Popconfirm>
         </Space>
@@ -549,52 +556,52 @@ export default function ProjectEditor() {
         title={<Title level={4} style={{ margin: 0 }}>{project.name}</Title>}
         extra={
           <Space>
-            <Button icon={<SafetyOutlined />} onClick={() => setComplianceOpen(true)}>GB校验</Button>
-            <Button onClick={() => setDragChainOpen(true)}>拖链计算</Button>
-            <Button icon={<BarChartOutlined />} onClick={() => navigate(`/projects/${projectId}/bom`)}>BOM清单</Button>
-            <Button type="primary" onClick={handleExportExcel}>导出Excel</Button>
+            <Button icon={<SafetyOutlined />} onClick={() => setComplianceOpen(true)}>{t('toolbar.gbCheck')}</Button>
+            <Button onClick={() => setDragChainOpen(true)}>{t('toolbar.dragChainCalc')}</Button>
+            <Button icon={<BarChartOutlined />} onClick={() => navigate(`/projects/${projectId}/bom`)}>{t('toolbar.bomList')}</Button>
+            <Button type="primary" onClick={handleExportExcel}>{t('toolbar.exportExcel')}</Button>
           </Space>
         }
       >
         <Descriptions size="small" column={3} style={{ marginBottom: 16 }}>
-          <Descriptions.Item label="描述">{project.description || '-'}</Descriptions.Item>
-          <Descriptions.Item label="房间数">{rooms.length}</Descriptions.Item>
-          <Descriptions.Item label="创建时间">{project.created_at?.slice(0, 10)}</Descriptions.Item>
+          <Descriptions.Item label={t('info.description')}>{project.description || '-'}</Descriptions.Item>
+          <Descriptions.Item label={t('info.roomCount')}>{rooms.length}</Descriptions.Item>
+          <Descriptions.Item label={t('info.createdAt')}>{project.created_at?.slice(0, 10)}</Descriptions.Item>
         </Descriptions>
       </Card>
 
       <Card
-        title="房间与配电"
+        title={t('room.sectionTitle')}
         style={{ marginTop: 16 }}
         extra={
           <Button type="primary" icon={<PlusOutlined />} onClick={() => {
             setRoomEdit(null);
             setRoomModal(true);
-          }}>新增房间</Button>
+          }}>{t('room.btnAdd')}</Button>
         }
       >
         {rooms.length === 0 ? (
-          <Empty description="暂无房间，请先新增房间" />
+          <Empty description={t('room.emptyHint')} />
         ) : (
           rooms.map(room => (
             <Card
               key={room.id}
               type="inner"
               size="small"
-              title={`${room.room_type} (${room.length_m}×${room.width_m}×${room.height_m}m)${room.light_model ? ` 照明:${room.light_model}×${room.light_count}` : ''}`}
+              title={`${room.room_type} (${room.length_m}×${room.width_m}×${room.height_m}m)${room.light_model ? ` ${t('room.lighting')}:${room.light_model}×${room.light_count}` : ''}`}
               extra={
                 <Space>
                   <Button size="small" type="primary" ghost icon={<PlusOutlined />} onClick={() => {
                     setActiveRoom(room.id);
                     setCircuitEdit(null);
                     setCircuitModal(true);
-                  }}>新增回路</Button>
-                  <Button size="small" icon={<EnvironmentOutlined />} onClick={() => handleLayoutOpen(room)}>布局</Button>
+                  }}>{t('circuit.btnAdd')}</Button>
+                  <Button size="small" icon={<EnvironmentOutlined />} onClick={() => handleLayoutOpen(room)}>{t('room.btnLayout')}</Button>
                   <Button size="small" onClick={() => {
                     setRoomEdit(room);
                     setRoomModal(true);
-                  }}>编辑</Button>
-                  <Popconfirm title="删除该房间及其所有回路？" onConfirm={() => deleteRoom(room.id)}>
+                  }}>{t('room.btnEdit')}</Button>
+                  <Popconfirm title={t('room.deleteConfirm')} onConfirm={() => deleteRoom(room.id)}>
                     <Button size="small" danger icon={<DeleteOutlined />} />
                   </Popconfirm>
                 </Space>
@@ -604,13 +611,13 @@ export default function ProjectEditor() {
               {/* Circuits */}
               {(() => {
                 const circuits = roomData[room.id] || [];
-                if (circuits.length === 0) return <Empty description="暂无回路" image={Empty.PRESENTED_IMAGE_SIMPLE} />;
+                if (circuits.length === 0) return <Empty description={t('circuit.emptyHint')} image={Empty.PRESENTED_IMAGE_SIMPLE} />;
                 return circuits.map(circuit => (
                   <Card
                     key={circuit.id}
                     type="inner"
                     size="small"
-                    title={`${circuit.name || '未命名'} ${circuit.purpose ? '(' + circuit.purpose + ')' : ''} — ${circuit.filter_model || '?'} (${circuit.voltage_type} / ${circuit.load_current_a}A)`}
+                    title={`${circuit.name || t('circuit.unnamed')} ${circuit.purpose ? '(' + circuit.purpose + ')' : ''} — ${circuit.filter_model || '?'} (${circuit.voltage_type} / ${circuit.load_current_a}A)`}
                     extra={
                       <Space size="small">
                         <Button size="small" type="primary" ghost icon={<PlusOutlined />} onClick={() => {
@@ -618,13 +625,13 @@ export default function ProjectEditor() {
                           setActiveCircuit(circuit.id);
                           setSegmentEdit(null);
                           setSegmentModal(true);
-                        }}>+线段</Button>
+                        }}>{t('circuit.btnAddSegment')}</Button>
                         <Button size="small" onClick={() => {
                           setActiveRoom(room.id);
                           setCircuitEdit(circuit);
                           setCircuitModal(true);
-                        }}>编辑</Button>
-                        <Popconfirm title="删除回路？" onConfirm={() => deleteCircuit(circuit.id)}>
+                        }}>{t('circuit.btnEdit')}</Button>
+                        <Popconfirm title={t('circuit.deleteConfirmShort')} onConfirm={() => deleteCircuit(circuit.id)}>
                           <Button size="small" danger icon={<DeleteOutlined />} />
                         </Popconfirm>
                       </Space>
@@ -633,7 +640,7 @@ export default function ProjectEditor() {
                   >
                     {/* Segments */}
                     {(!circuit.segments || circuit.segments.length === 0) ? (
-                      <Empty description="暂无线缆段" image={Empty.PRESENTED_IMAGE_SIMPLE} />
+                      <Empty description={t('segment.emptyHint')} image={Empty.PRESENTED_IMAGE_SIMPLE} />
                     ) : (
                       circuit.segments.map(seg => (
                         <div key={seg.id} style={{ marginBottom: 8, marginLeft: 24, padding: '8px 12px', border: '1px solid #f0f0f0', borderRadius: 6 }}>
@@ -643,7 +650,7 @@ export default function ProjectEditor() {
                               <strong>{seg.cable_model || '?'}</strong>
                               <span>{seg.cross_section_mm2}mm²</span>
                               <span>{seg.length_m}m</span>
-                              {seg.parallel_count > 1 && <Tag color="blue">×{seg.parallel_count}并联</Tag>}
+                              {seg.parallel_count > 1 && <Tag color="blue">×{seg.parallel_count}{t('segment.types.parallel')}</Tag>}
                             </Space>
                             <Space size="small">
                               <Button size="small" type="primary" ghost icon={<PlusOutlined />} onClick={() => {
@@ -652,14 +659,14 @@ export default function ProjectEditor() {
                                 setActiveSegment(seg.id);
                                 setDeviceEdit(null);
                                 setDeviceModal(true);
-                              }}>+设备</Button>
+                              }}>{t('segment.btnAddDevice')}</Button>
                               <Button size="small" onClick={() => {
                                 setActiveRoom(room.id);
                                 setActiveCircuit(circuit.id);
                                 setSegmentEdit(seg);
                                 setSegmentModal(true);
-                              }}>编辑</Button>
-                              <Popconfirm title="删除线段？" onConfirm={() => deleteSegment(seg.id)}>
+                              }}>{t('segment.btnEdit')}</Button>
+                              <Popconfirm title={t('segment.deleteConfirmShort')} onConfirm={() => deleteSegment(seg.id)}>
                                 <Button size="small" danger icon={<DeleteOutlined />} />
                               </Popconfirm>
                             </Space>

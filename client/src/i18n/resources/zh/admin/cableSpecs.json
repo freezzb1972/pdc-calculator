@@ -1,0 +1,36 @@
+{
+  "title": "电缆规格",
+  "btnAdd": "新增",
+  "btnImport": "批量导入",
+  "btnExport": "导出",
+  "searchPlaceholder": "搜索型号/导体/绝缘",
+  "deleteConfirm": "确定删除？",
+  "modalEdit": "编辑电缆",
+  "modalNew": "新增电缆",
+  "columns": {
+    "model": "型号",
+    "conductor": "导体",
+    "insulation": "绝缘",
+    "crossSection": "截面(mm²)",
+    "cores": "芯数",
+    "ampacity": "载流量(A)",
+    "unitPrice": "单价(¥/m)",
+    "actions": "操作"
+  },
+  "form": {
+    "model": "型号",
+    "conductor": "导体材料",
+    "insulation": "绝缘",
+    "crossSection": "截面(mm²)",
+    "cores": "芯数",
+    "ampacity": "载流量(A)",
+    "unitPrice": "单价(¥/m)"
+  },
+  "messages": {
+    "updated": "已更新",
+    "created": "已创建",
+    "deleted": "已删除",
+    "importSuccess": "导入成功",
+    "importFailed": "导入失败"
+  }
+}

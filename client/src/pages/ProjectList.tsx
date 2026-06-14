@@ -4,8 +4,11 @@ import { Card, Table, Button, Space, Modal, Form, Input, message, Popconfirm, Ro
 import { PlusOutlined, EditOutlined, DeleteOutlined, FolderOutlined, TeamOutlined, ThunderboltOutlined, DollarOutlined } from '@ant-design/icons';
 import { api } from '../api/client';
 import type { Project } from '../types';
+import { useAppTranslation } from '../i18n/useAppTranslation';
+import BilingualText from '../i18n/BilingualText';
 
 export default function ProjectList() {
+  const { t } = useAppTranslation('projects');
   const navigate = useNavigate();
   const [projects, setProjects] = useState<Project[]>([]);
   const [loading, setLoading] = useState(false);
@@ -42,10 +45,10 @@ export default function ProjectList() {
     const values = await form.validateFields();
     if (editing) {
       await api.updateProject(editing.id, values);
-      message.success('已更新');
+      message.success(t('msgUpdated'));
     } else {
       await api.createProject(values);
-      message.success('已创建');
+      message.success(t('msgCreated'));
     }
     setModalOpen(false);
     setEditing(null);
@@ -55,26 +58,27 @@ export default function ProjectList() {
 
   const handleDelete = async (id: number) => {
     await api.deleteProject(id);
-    message.success('已删除');
+    message.success(t('msgDeleted'));
     load();
   };
 
   const columns = [
-    { title: '项目名称', dataIndex: 'name', key: 'name' },
-    { title: '描述', dataIndex: 'description', key: 'description', ellipsis: true },
-    { title: '创建时间', dataIndex: 'created_at', key: 'created_at', render: (v: string) => v?.slice(0, 10) },
+    { title: <BilingualText textKey="columns.name" ns="projects" />, dataIndex: 'name', key: 'name' },
+    { title: <BilingualText textKey="columns.description" ns="projects" />, dataIndex: 'description', key: 'description', ellipsis: true },
+    { title: <BilingualText textKey="columns.createdAt" ns="projects" />, dataIndex: 'created_at', key: 'created_at', render: (v: string) => v?.slice(0, 10) },
     {
-      title: '操作', key: 'action',
+      title: <BilingualText textKey="columns.actions" ns="projects" />,
+      key: 'action',
       render: (_: any, row: Project) => (
         <Space>
           <Button size="small" icon={<EditOutlined />} onClick={() => {
             setEditing(row);
             form.setFieldsValue(row);
             setModalOpen(true);
-          }}>编辑</Button>
-          <Button size="small" type="primary" onClick={() => navigate(`/projects/${row.id}`)}>配置</Button>
+          }}>{t('btnEdit')}</Button>
+          <Button size="small" type="primary" onClick={() => navigate(`/projects/${row.id}`)}>{t('btnConfigure')}</Button>
           <Button size="small" onClick={() => navigate(`/projects/${row.id}/bom`)}>BOM</Button>
-          <Popconfirm title="确定删除？" onConfirm={() => handleDelete(row.id)}>
+          <Popconfirm title={t('deleteConfirm')} onConfirm={() => handleDelete(row.id)}>
             <Button size="small" danger icon={<DeleteOutlined />} />
           </Popconfirm>
         </Space>
@@ -84,39 +88,38 @@ export default function ProjectList() {
 
   return (
     <div>
-      {/* Dashboard stats */}
       <Row gutter={16} style={{ marginBottom: 16 }}>
         <Col span={6}>
           <Card size="small">
-            <Statistic title="项目总数" value={projects.length} prefix={<FolderOutlined />} suffix="个" />
+            <Statistic title={<BilingualText textKey="stats.projectCount" ns="projects" />} value={projects.length} prefix={<FolderOutlined />} suffix={t('units.piece', { ns: 'common' })} />
           </Card>
         </Col>
         <Col span={6}>
           <Card size="small">
-            <Statistic title="房间总数" value={stats.rooms} prefix={<TeamOutlined />} suffix="间" />
+            <Statistic title={<BilingualText textKey="stats.roomCount" ns="projects" />} value={stats.rooms} prefix={<TeamOutlined />} suffix={t('units.room', { ns: 'common' })} />
           </Card>
         </Col>
         <Col span={6}>
           <Card size="small">
-            <Statistic title="滤波器" value={stats.filterCount} prefix={<ThunderboltOutlined />} suffix="种" />
+            <Statistic title={<BilingualText textKey="stats.filterCount" ns="projects" />} value={stats.filterCount} prefix={<ThunderboltOutlined />} suffix={t('units.kind', { ns: 'common' })} />
           </Card>
         </Col>
         <Col span={6}>
           <Card size="small">
-            <Statistic title="电缆规格" value={stats.cableCount} prefix={<DollarOutlined />} suffix="种" />
+            <Statistic title={<BilingualText textKey="stats.cableCount" ns="projects" />} value={stats.cableCount} prefix={<DollarOutlined />} suffix={t('units.kind', { ns: 'common' })} />
           </Card>
         </Col>
       </Row>
 
       <Card
-        title="项目管理"
+        title={<BilingualText textKey="title" ns="projects" />}
         extra={
           <Space>
             <Button type="primary" icon={<PlusOutlined />} onClick={() => {
               setEditing(null);
               form.resetFields();
               setModalOpen(true);
-            }}>新建项目</Button>
+            }}>{t('btnNew')}</Button>
           </Space>
         }
       >
@@ -124,16 +127,16 @@ export default function ProjectList() {
       </Card>
 
       <Modal
-        title={editing ? '编辑项目' : '新建项目'}
+        title={editing ? t('modalEdit') : t('modalNew')}
         open={modalOpen}
         onOk={handleSave}
         onCancel={() => { setModalOpen(false); setEditing(null); }}
       >
         <Form form={form} layout="vertical">
-          <Form.Item name="name" label="项目名称" rules={[{ required: true }]}>
+          <Form.Item name="name" label={t('labelName')} rules={[{ required: true }]}>
             <Input />
           </Form.Item>
-          <Form.Item name="description" label="描述">
+          <Form.Item name="description" label={t('labelDescription')}>
             <Input.TextArea rows={3} />
           </Form.Item>
         </Form>

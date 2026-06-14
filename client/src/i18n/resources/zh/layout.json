@@ -1,0 +1,33 @@
+{
+  "appTitle": "暗室配电计算",
+  "appTitleShort": "PDC",
+  "menu": {
+    "projects": "项目管理",
+    "filters": "滤波器库",
+    "cables": "电缆规格",
+    "gbTables": "GB标准数据",
+    "prices": "价格管理",
+    "selectionRules": "选型规则",
+    "users": "用户管理"
+  },
+  "userMenu": {
+    "changePassword": "修改密码",
+    "logout": "退出登录",
+    "oldPassword": "旧密码",
+    "newPassword": "新密码",
+    "confirmPassword": "确认密码",
+    "oldPasswordRequired": "请输入旧密码",
+    "newPasswordRequired": "请输入新密码",
+    "confirmPasswordRequired": "请确认新密码",
+    "passwordMinLength": "密码至少6位",
+    "passwordMismatch": "两次密码不一致",
+    "passwordChanged": "密码已修改",
+    "passwordChangeFailed": "修改失败"
+  },
+  "lang": {
+    "switch": "语言",
+    "zh": "中文",
+    "en": "English",
+    "zhEn": "中英文"
+  }
+}

@@ -1,0 +1,12 @@
+{
+  "title": "PDC Calculator",
+  "username": "Username",
+  "password": "Password",
+  "login": "Login",
+  "usernamePlaceholder": "Username",
+  "passwordPlaceholder": "Password",
+  "usernameRequired": "Please enter username",
+  "passwordRequired": "Please enter password",
+  "loginSuccess": "Login successful",
+  "loginFailed": "Incorrect username or password"
+}

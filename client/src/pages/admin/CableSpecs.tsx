@@ -3,8 +3,11 @@ import { Card, Table, Button, Space, Modal, Form, Input, InputNumber, message, P
 import { PlusOutlined, EditOutlined, DeleteOutlined, UploadOutlined, DownloadOutlined, SearchOutlined } from '@ant-design/icons';
 import { api } from '../../api/client';
 import type { CableSpec } from '../../types';
+import { useAppTranslation } from '../../i18n/useAppTranslation';
+import BilingualText from '../../i18n/BilingualText';
 
 export default function CableSpecs() {
+  const { t } = useAppTranslation('cableSpecs');
   const [data, setData] = useState<CableSpec[]>([]);
   const [loading, setLoading] = useState(false);
   const [modalOpen, setModalOpen] = useState(false);
@@ -38,10 +41,10 @@ export default function CableSpecs() {
     const values = await form.validateFields();
     if (editing) {
       await api.updateCable(editing.id, values);
-      message.success('已更新');
+      message.success(t('messages.updated'));
     } else {
       await api.createCable(values);
-      message.success('已创建');
+      message.success(t('messages.created'));
     }
     setModalOpen(false);
     setEditing(null);
@@ -51,7 +54,7 @@ export default function CableSpecs() {
 
   const handleDelete = async (id: number) => {
     await api.deleteCable(id);
-    message.success('已删除');
+    message.success(t('messages.deleted'));
     load();
   };
 
@@ -72,24 +75,24 @@ export default function CableSpecs() {
       const text = await file.text();
       const data = JSON.parse(text);
       await api.importCables(data);
-      message.success('导入成功');
+      message.success(t('messages.importSuccess'));
       load();
     } catch {
-      message.error('导入失败');
+      message.error(t('messages.importFailed'));
     }
     if (fileRef.current) fileRef.current.value = '';
   };
 
   const columns = [
-    { title: '型号', dataIndex: 'model_name', key: 'model_name' },
-    { title: '导体', dataIndex: 'conductor_material', key: 'conductor_material' },
-    { title: '绝缘', dataIndex: 'insulation', key: 'insulation' },
-    { title: '截面(mm²)', dataIndex: 'cross_section_mm2', key: 'cross_section_mm2' },
-    { title: '芯数', dataIndex: 'core_count', key: 'core_count' },
-    { title: '载流量(A)', dataIndex: 'max_current_a', key: 'max_current_a' },
-    { title: '单价(¥/m)', dataIndex: 'unit_price', key: 'unit_price', render: (v: number) => v?.toFixed(2) },
+    { title: <BilingualText textKey="columns.model" ns="cableSpecs" />, dataIndex: 'model_name', key: 'model_name' },
+    { title: <BilingualText textKey="columns.conductor" ns="cableSpecs" />, dataIndex: 'conductor_material', key: 'conductor_material' },
+    { title: <BilingualText textKey="columns.insulation" ns="cableSpecs" />, dataIndex: 'insulation', key: 'insulation' },
+    { title: <BilingualText textKey="columns.crossSection" ns="cableSpecs" />, dataIndex: 'cross_section_mm2', key: 'cross_section_mm2' },
+    { title: <BilingualText textKey="columns.cores" ns="cableSpecs" />, dataIndex: 'core_count', key: 'core_count' },
+    { title: <BilingualText textKey="columns.ampacity" ns="cableSpecs" />, dataIndex: 'max_current_a', key: 'max_current_a' },
+    { title: <BilingualText textKey="columns.unitPrice" ns="cableSpecs" />, dataIndex: 'unit_price', key: 'unit_price', render: (v: number) => v?.toFixed(2) },
     {
-      title: '操作', key: 'action', width: 100,
+      title: <BilingualText textKey="columns.actions" ns="cableSpecs" />, key: 'action', width: 100,
       render: (_: any, row: CableSpec) => (
         <Space>
           <Button size="small" icon={<EditOutlined />} onClick={() => {
@@ -97,7 +100,7 @@ export default function CableSpecs() {
             form.setFieldsValue(row);
             setModalOpen(true);
           }} />
-          <Popconfirm title="确定删除？" onConfirm={() => handleDelete(row.id)}>
+          <Popconfirm title={t('deleteConfirm')} onConfirm={() => handleDelete(row.id)}>
             <Button size="small" danger icon={<DeleteOutlined />} />
           </Popconfirm>
         </Space>
@@ -107,11 +110,11 @@ export default function CableSpecs() {
 
   return (
     <Card
-      title="电缆规格"
+      title={t('title')}
       extra={
         <Space>
           <Input
-            placeholder="搜索型号/导体/绝缘"
+            placeholder={t('searchPlaceholder')}
             prefix={<SearchOutlined />}
             value={search}
             onChange={(e) => setSearch(e.target.value)}
@@ -119,32 +122,32 @@ export default function CableSpecs() {
             style={{ width: 200 }}
           />
           <input ref={fileRef} type="file" accept=".json" style={{ display: 'none' }} onChange={handleImport} />
-          <Button icon={<DownloadOutlined />} onClick={handleExport}>导出</Button>
-          <Button icon={<UploadOutlined />} onClick={() => fileRef.current?.click()}>批量导入</Button>
+          <Button icon={<DownloadOutlined />} onClick={handleExport}>{t('btnExport')}</Button>
+          <Button icon={<UploadOutlined />} onClick={() => fileRef.current?.click()}>{t('btnImport')}</Button>
           <Button type="primary" icon={<PlusOutlined />} onClick={() => {
             setEditing(null);
             form.resetFields();
             setModalOpen(true);
-          }}>新增</Button>
+          }}>{t('btnAdd')}</Button>
         </Space>
       }
     >
       <Table rowKey="id" columns={columns} dataSource={filtered} loading={loading} size="small" pagination={false} />
 
-      <Modal title={editing ? '编辑电缆' : '新增电缆'} open={modalOpen} onOk={handleSave} onCancel={() => { setModalOpen(false); setEditing(null); }} width={520}>
+      <Modal title={editing ? t('modalEdit') : t('modalNew')} open={modalOpen} onOk={handleSave} onCancel={() => { setModalOpen(false); setEditing(null); }} width={520}>
         <Form form={form} layout="vertical">
-          <Form.Item name="model_name" label="型号" rules={[{ required: true }]}><Input /></Form.Item>
+          <Form.Item name="model_name" label={t('form.model')} rules={[{ required: true }]}><Input /></Form.Item>
           <Space style={{ width: '100%' }} size={16}>
-            <Form.Item name="conductor_material" label="导体材料"><Input style={{ width: 180 }} /></Form.Item>
-            <Form.Item name="insulation" label="绝缘"><Input style={{ width: 180 }} /></Form.Item>
+            <Form.Item name="conductor_material" label={t('form.conductor')}><Input style={{ width: 180 }} /></Form.Item>
+            <Form.Item name="insulation" label={t('form.insulation')}><Input style={{ width: 180 }} /></Form.Item>
           </Space>
           <Space style={{ width: '100%' }} size={16}>
-            <Form.Item name="cross_section_mm2" label="截面(mm²)" rules={[{ required: true }]}><InputNumber style={{ width: 160 }} /></Form.Item>
-            <Form.Item name="core_count" label="芯数"><InputNumber style={{ width: 160 }} /></Form.Item>
+            <Form.Item name="cross_section_mm2" label={t('form.crossSection')} rules={[{ required: true }]}><InputNumber style={{ width: 160 }} /></Form.Item>
+            <Form.Item name="core_count" label={t('form.cores')}><InputNumber style={{ width: 160 }} /></Form.Item>
           </Space>
           <Space style={{ width: '100%' }} size={16}>
-            <Form.Item name="max_current_a" label="载流量(A)" rules={[{ required: true }]}><InputNumber style={{ width: 160 }} /></Form.Item>
-            <Form.Item name="unit_price" label="单价(¥/m)"><InputNumber style={{ width: 160 }} precision={2} /></Form.Item>
+            <Form.Item name="max_current_a" label={t('form.ampacity')} rules={[{ required: true }]}><InputNumber style={{ width: 160 }} /></Form.Item>
+            <Form.Item name="unit_price" label={t('form.unitPrice')}><InputNumber style={{ width: 160 }} precision={2} /></Form.Item>
           </Space>
         </Form>
       </Modal>

@@ -1,0 +1,41 @@
+{
+  "title": "用户管理",
+  "btnAdd": "新增用户",
+  "columns": {
+    "username": "用户名",
+    "displayName": "显示名",
+    "role": "角色",
+    "createdAt": "创建时间",
+    "actions": "操作"
+  },
+  "roles": {
+    "admin": "管理员",
+    "editor": "编辑者"
+  },
+  "actions": {
+    "changePassword": "改密",
+    "deleteConfirm": "确定删除该用户？"
+  },
+  "createModal": {
+    "title": "新增用户",
+    "username": "用户名",
+    "password": "密码",
+    "displayName": "显示名",
+    "role": "角色"
+  },
+  "changePasswordModal": {
+    "title": "修改密码",
+    "newPassword": "新密码",
+    "confirmPassword": "确认密码",
+    "passwordMinLength": "密码至少6位",
+    "passwordMismatch": "两次密码不一致"
+  },
+  "messages": {
+    "userCreated": "用户已创建",
+    "createFailed": "创建失败",
+    "deleted": "已删除",
+    "deleteFailed": "删除失败",
+    "passwordChanged": "密码已修改",
+    "modifyFailed": "修改失败"
+  }
+}

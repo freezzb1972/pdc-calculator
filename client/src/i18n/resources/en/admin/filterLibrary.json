@@ -1,0 +1,49 @@
+{
+  "title": "Filter Library",
+  "btnAdd": "Add",
+  "btnImport": "Batch Import",
+  "btnExport": "Export",
+  "deleteConfirm": "Confirm delete?",
+  "modalEdit": "Edit Filter",
+  "modalNew": "Add Filter",
+  "columns": {
+    "model": "Model",
+    "vendor": "Vendor",
+    "voltage": "Voltage (V)",
+    "current": "Current (A)",
+    "phase": "Phase",
+    "lines": "Lines",
+    "dimensions": "Dimensions",
+    "unitPrice": "Unit Price (¥)",
+    "category": "Category",
+    "actions": "Actions"
+  },
+  "form": {
+    "model": "Model",
+    "vendor": "Vendor",
+    "voltage": "Voltage (V)",
+    "current": "Current (A)",
+    "phase": "Phase",
+    "lines": "Lines",
+    "dimensions": "Dimensions",
+    "dimensionsPlaceholder": "e.g. 300×200×100",
+    "unitPrice": "Unit Price (¥)",
+    "category": "Category",
+    "categoryPlaceholder": "e.g. Chamber/Amplifier/Conduction",
+    "notes": "Notes"
+  },
+  "messages": {
+    "updated": "Updated",
+    "created": "Created",
+    "deleted": "Deleted",
+    "exportSuccess": "Export successful",
+    "exportFailed": "Export failed",
+    "importSuccess": "Import successful",
+    "importFailed": "Import failed, please check file format"
+  },
+  "phaseOptions": {
+    "single": "Single Phase",
+    "three": "Three Phase",
+    "dc": "DC"
+  }
+}

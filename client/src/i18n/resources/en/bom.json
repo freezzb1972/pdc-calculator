@@ -1,0 +1,27 @@
+{
+  "title": "Bill of Materials (BOM)",
+  "btnExport": "Export Excel",
+  "errorLoad": "Unable to load BOM data",
+  "columns": {
+    "category": "Category",
+    "name": "Name",
+    "spec": "Specification",
+    "quantity": "Quantity",
+    "unit": "Unit",
+    "unitPrice": "Unit Price (¥)",
+    "subtotal": "Subtotal (¥)"
+  },
+  "categories": {
+    "filter": "Filter",
+    "cable": "Cable",
+    "accessory": "Accessory",
+    "device": "Device"
+  },
+  "stats": {
+    "filterCount": "Filters",
+    "cableLength": "Total Cable Length",
+    "deviceCount": "Devices",
+    "totalPrice": "Total Price"
+  },
+  "total": "Total"
+}

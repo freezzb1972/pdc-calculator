@@ -1,0 +1,23 @@
+{
+  "title": "GB Standards Compliance Check",
+  "reference": "Reference Standards",
+  "project": "Project",
+  "columns": {
+    "item": "Check Item",
+    "standard": "Standard",
+    "status": "Status",
+    "description": "Description",
+    "source": "Circuit / Segment"
+  },
+  "stats": {
+    "pass": "Pass",
+    "warning": "Warning",
+    "fail": "Fail",
+    "conclusion": "Conclusion",
+    "allPass": "All Passed",
+    "needFix": "Needs Fix"
+  },
+  "allPassed": "All checks passed",
+  "noData": "No Data",
+  "noDataHint": "Please configure project circuits and cable segments first"
+}
